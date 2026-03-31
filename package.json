@@ -1,0 +1,53 @@
+{
+  "name": "guatape",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Guatapé — Laravel 12 + Vue 3 scaffold",
+  "workspaces": [
+    "src/frontend"
+  ],
+  "scripts": {
+    "start": "docker compose up -d api frontend nginx db redis",
+    "start:all": "docker compose --profile tools --profile storybook up -d",
+    "stop": "docker compose --profile tools --profile storybook down",
+    "dev": "docker compose up api frontend nginx db redis",
+    "logs": "docker compose logs -f",
+    "logs:api": "docker compose logs -f api",
+    "logs:frontend": "docker compose logs -f frontend",
+
+    "setup": "bash scripts/setup.sh",
+    "setup:env": "cp -n .env.example .env || true",
+    "setup:certs": "docker compose --profile setup run --rm mkcert",
+
+    "docker:rebuild": "docker compose build --no-cache",
+    "docker:clean": "docker compose --profile tools --profile storybook down -v --remove-orphans",
+
+    "artisan": "docker compose exec api php artisan",
+    "composer": "docker compose exec api composer",
+    "tinker": "docker compose exec api php artisan tinker",
+
+    "migrate": "docker compose exec api php artisan migrate",
+    "migrate:fresh": "docker compose exec api php artisan migrate:fresh --seed",
+    "migrate:status": "docker compose exec api php artisan migrate:status",
+    "seed": "docker compose exec api php artisan db:seed",
+
+    "storybook": "docker compose --profile storybook up -d storybook",
+    "storybook:build": "docker compose exec frontend npm run build-storybook",
+
+    "lint": "docker compose exec frontend npm run lint",
+    "lint:fix": "docker compose exec frontend npm run lint:fix",
+    "format": "docker compose exec frontend npm run format",
+    "test:api": "docker compose exec api php artisan test",
+    "test:frontend": "docker compose exec frontend npm run test",
+
+    "queue:work": "docker compose exec api php artisan queue:work",
+    "queue:listen": "docker compose exec api php artisan queue:listen",
+
+    "backup:db": "bash scripts/backup-db.sh"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "husky": "^9.0.0"
+  }
+}

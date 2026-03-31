@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+src/api/vendor/
+
+# Environment
+.env
+.env.local
+
+# Build output
+dist/
+src/frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Certs (generated)
+certs/*.pem
+
+# Backups
+backups/*.sql
+backups/*.gz
+
+# Laravel
+src/api/storage/logs/*.log
+src/api/bootstrap/cache/*.php
