@@ -81,6 +81,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted proxies
+    |--------------------------------------------------------------------------
+    |
+    | Proxies whose X-Forwarded-* headers are honoured: "*" for any (only when
+    | the app is unreachable except through the proxy), or comma-separated IPs
+    | / CIDRs. Empty: none, so behind a TLS terminator Laravel sees http://
+    | and the proxy's IP.
+    |
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES') ?: null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

@@ -9,6 +9,7 @@ use App\Support\JobRunRecorder;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
@@ -26,6 +27,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Behind a TLS terminator, trust its X-Forwarded-* headers so URLs,
+        // secure cookies and client IPs are right. Set here and not in
+        // bootstrap/app.php: config isn't loaded yet when that file runs.
+        if ($proxies = config('app.trusted_proxies')) {
+            TrustProxies::at($proxies);
+        }
+
         Password::defaults(fn () => $this->app->isProduction()
             ? Password::min(10)->uncompromised()
             : Password::min(8));
