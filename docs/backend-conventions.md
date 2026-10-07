@@ -80,11 +80,13 @@ protected function casts(): array { return ['description' => SanitizedHtml::clas
 
 ## Translations
 
-`APP_LOCALE=es` by default. Framework messages live in `lang/es/*.php`; the
-app's own sentences use `__('English sentence.')` with the Spanish in
-`lang/es.json`. `tests/Unit/TranslationsTest.php` fails when a framework key
-or a literal `__()` string has no Spanish translation. Field names for
-validation messages: `lang/es/validation.php` → `attributes`.
+`es` (default, `APP_LOCALE`) and `en`, listed in `config/app.php`
+`supported_locales`. `SetLocale` picks the response language per request (user
+→ `Accept-Language` → `APP_LOCALE`) and mails follow the recipient's
+`locale`. Framework messages live in `lang/<code>/*.php`; the app's own
+sentences use `__('English sentence.')` with translations in
+`lang/<code>.json`. `TranslationsTest` fails on untranslated strings. Full
+guide: `docs/i18n.md`.
 
 ## Runtime settings
 
