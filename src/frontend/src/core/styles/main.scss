@@ -9,6 +9,19 @@
   padding: 0;
 }
 
+// App surface tokens, mapped onto PrimeVue 4's (they follow its light/dark
+// scheme). PrimeVue 4 has no --p-surface-card/ground/border: code written for
+// v3 that uses them gets transparent backgrounds and invisible borders.
+:root {
+  --app-surface-card: var(--p-content-background);
+  --app-surface-ground: var(--p-surface-50);
+  --app-surface-border: var(--p-content-border-color);
+}
+
+.app-dark {
+  --app-surface-ground: var(--p-surface-950);
+}
+
 html {
   font-size: $font-size-base;
 }
@@ -16,7 +29,7 @@ html {
 body {
   font-family: $font-family;
   color: var(--p-text-color);
-  background-color: var(--p-surface-ground);
+  background-color: var(--app-surface-ground);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }

@@ -1,18 +1,18 @@
 <script setup lang="ts" generic="T">
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 defineProps<{
-  columns: { key: string; label: string; sortable?: boolean; width?: string }[]
-  data: T[]
-  loading?: boolean
-  emptyText?: string
-  clickable?: boolean
-}>()
+  columns: { key: string; label: string; sortable?: boolean; width?: string }[];
+  data: T[];
+  loading?: boolean;
+  emptyText?: string;
+  clickable?: boolean;
+}>();
 
 defineEmits<{
-  'row-click': [item: T]
-}>()
+  'row-click': [item: T];
+}>();
 </script>
 
 <template>

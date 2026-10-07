@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 /**
  * App shell layout state. Drives the collapsible sidebar: on large screens the
@@ -8,21 +8,21 @@ import { ref } from 'vue'
  * the current viewport so components can choose push-vs-overlay behavior.
  */
 export const useLayoutStore = defineStore('layout', () => {
-  const sidebarOpen = ref(true)
-  const isMobile = ref(false)
-  let initialized = false
+  const sidebarOpen = ref(true);
+  const isMobile = ref(false);
+  let initialized = false;
 
   function toggleSidebar() {
-    sidebarOpen.value = !sidebarOpen.value
+    sidebarOpen.value = !sidebarOpen.value;
   }
 
   function setSidebar(open: boolean) {
-    sidebarOpen.value = open
+    sidebarOpen.value = open;
   }
 
   /** Close the sidebar after navigation, but only when it overlays content. */
   function closeOnMobile() {
-    if (isMobile.value) sidebarOpen.value = false
+    if (isMobile.value) sidebarOpen.value = false;
   }
 
   /**
@@ -32,16 +32,16 @@ export const useLayoutStore = defineStore('layout', () => {
    * its own DashboardLayout, but this runs only the first time).
    */
   function initResponsive() {
-    if (initialized || typeof window === 'undefined') return
-    initialized = true
-    const mq = window.matchMedia('(max-width: 1024px)')
+    if (initialized || typeof window === 'undefined') return;
+    initialized = true;
+    const mq = window.matchMedia('(max-width: 1024px)');
     const apply = (matches: boolean) => {
-      isMobile.value = matches
-      sidebarOpen.value = !matches
-    }
-    apply(mq.matches)
-    mq.addEventListener('change', (e) => apply(e.matches))
+      isMobile.value = matches;
+      sidebarOpen.value = !matches;
+    };
+    apply(mq.matches);
+    mq.addEventListener('change', (e) => apply(e.matches));
   }
 
-  return { sidebarOpen, isMobile, toggleSidebar, setSidebar, closeOnMobile, initResponsive }
-})
+  return { sidebarOpen, isMobile, toggleSidebar, setSidebar, closeOnMobile, initResponsive };
+});

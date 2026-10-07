@@ -1,5 +1,24 @@
 import type { Preview } from '@storybook/vue3';
+import { setup } from '@storybook/vue3';
+import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
+import Tooltip from 'primevue/tooltip';
+import AppPreset from '../src/core/styles/primevue-preset';
+import { primeVueLocaleEs } from '../src/core/constants/primevue-locale-es';
+import 'primeicons/primeicons.css';
 import '../src/core/styles/main.scss';
+
+// Same PrimeVue setup as src/main.ts, so stories render like the app.
+setup((app) => {
+  app.use(PrimeVue, {
+    locale: primeVueLocaleEs,
+    theme: { preset: AppPreset, options: { cssLayer: false, darkModeSelector: '.app-dark' } },
+  });
+  app.use(ConfirmationService);
+  app.use(ToastService);
+  app.directive('tooltip', Tooltip);
+});
 
 const preview: Preview = {
   parameters: {

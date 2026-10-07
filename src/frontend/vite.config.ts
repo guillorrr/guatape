@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
@@ -22,6 +23,12 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.spec.ts'],
+    // Component specs mount PrimeVue; its CSS-in-JS theme isn't needed there.
+    css: false,
   },
   css: {
     preprocessorOptions: {

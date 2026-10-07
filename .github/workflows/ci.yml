@@ -67,7 +67,7 @@ jobs:
           php artisan test
 
   frontend:
-    name: Frontend (type-check + build)
+    name: Frontend (lint, types, Vitest, build, Storybook)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     defaults:
@@ -85,5 +85,10 @@ jobs:
       # --prefix pins the install to src/frontend: without it npm finds the root
       # package.json (workspaces) and demands a root package-lock.json.
       - run: npm ci --prefix .
+      - run: npm run lint
+      - run: npm run format:check
       - run: npm run type-check
+      - run: npm run test
       - run: npm run build
+      - name: Storybook builds
+        run: npx storybook build --quiet -o storybook-static

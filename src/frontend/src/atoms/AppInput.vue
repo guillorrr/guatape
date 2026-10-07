@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import InputText from 'primevue/inputtext'
-import InputNumber from 'primevue/inputnumber'
-import { computed } from 'vue'
+import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
+import { computed } from 'vue';
 
 export interface AppInputProps {
-  label?: string
-  type?: string
-  placeholder?: string
-  error?: string
-  required?: boolean
+  label?: string;
+  type?: string;
+  placeholder?: string;
+  error?: string;
+  required?: boolean;
 }
 
 const props = withDefaults(defineProps<AppInputProps>(), {
@@ -17,21 +17,26 @@ const props = withDefaults(defineProps<AppInputProps>(), {
   placeholder: undefined,
   error: undefined,
   required: false,
-})
+});
 
-const model = defineModel<string | number>()
+const model = defineModel<string | number>();
 
-const isNumber = computed(() => props.type === 'number')
+const isNumber = computed(() => props.type === 'number');
 
 // InputNumber binds numbers and InputText strings; narrow the shared model.
 const numberModel = computed({
-  get: () => (typeof model.value === 'number' ? model.value : model.value ? Number(model.value) : null),
-  set: (v: number | null) => { model.value = v ?? undefined },
-})
+  get: () =>
+    typeof model.value === 'number' ? model.value : model.value ? Number(model.value) : null,
+  set: (v: number | null) => {
+    model.value = v ?? undefined;
+  },
+});
 const textModel = computed({
   get: () => (model.value == null ? '' : String(model.value)),
-  set: (v: string | undefined) => { model.value = v },
-})
+  set: (v: string | undefined) => {
+    model.value = v;
+  },
+});
 </script>
 
 <template>
@@ -64,8 +69,21 @@ const textModel = computed({
 </template>
 
 <style scoped>
-.field { display: flex; flex-direction: column; gap: 4px; }
-.field__label { font-size: 0.85rem; font-weight: 500; color: var(--p-text-color); }
-.field__required { color: var(--p-red-500); }
-.field__error { color: var(--p-red-500); font-size: 0.75rem; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.field__label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+}
+.field__required {
+  color: var(--p-red-500);
+}
+.field__error {
+  color: var(--p-red-500);
+  font-size: 0.75rem;
+}
 </style>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
-import { useAuthStore } from '@/core/stores/auth.store'
+import Button from 'primevue/button';
+import { useAuthStore } from '@/core/stores/auth.store';
 
-const auth = useAuthStore()
-const appName = import.meta.env.VITE_APP_NAME || 'Guatape'
+const auth = useAuthStore();
+const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 </script>
 
 <template>

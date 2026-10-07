@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import Select from 'primevue/select'
+import Select from 'primevue/select';
 
 export interface SelectOption {
-  value: string | number
-  label: string
+  value: string | number;
+  label: string;
 }
 
 export interface AppSelectProps {
-  label?: string
-  options: SelectOption[]
-  placeholder?: string
-  required?: boolean
-  disabled?: boolean
-  error?: string
-  filter?: boolean
+  label?: string;
+  options: SelectOption[];
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  error?: string;
+  filter?: boolean;
 }
 
 withDefaults(defineProps<AppSelectProps>(), {
@@ -23,9 +23,9 @@ withDefaults(defineProps<AppSelectProps>(), {
   disabled: false,
   error: undefined,
   filter: false,
-})
+});
 
-const model = defineModel<string | number | null>()
+const model = defineModel<string | number | null>();
 </script>
 
 <template>
@@ -50,8 +50,21 @@ const model = defineModel<string | number | null>()
 </template>
 
 <style scoped>
-.field { display: flex; flex-direction: column; gap: 4px; }
-.field__label { font-size: 0.85rem; font-weight: 500; color: var(--p-text-color); }
-.field__required { color: var(--p-red-500); }
-.field__error { color: var(--p-red-500); font-size: 0.75rem; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.field__label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+}
+.field__required {
+  color: var(--p-red-500);
+}
+.field__error {
+  color: var(--p-red-500);
+  font-size: 0.75rem;
+}
 </style>

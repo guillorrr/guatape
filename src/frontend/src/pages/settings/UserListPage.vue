@@ -4,124 +4,132 @@
  * AppCrudTable + useDataTable for the list, useForm for create/edit with
  * server-side validation, permission-gated actions, confirm before delete.
  */
-import { computed, onMounted, ref } from 'vue'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import MultiSelect from 'primevue/multiselect'
-import Select from 'primevue/select'
-import Tag from 'primevue/tag'
-import { useConfirm } from 'primevue/useconfirm'
-import AppCrudTable, { type CrudColumn } from '@/molecules/AppCrudTable.vue'
-import AppModal from '@/molecules/AppModal.vue'
-import { useDataTable } from '@/composables/useDataTable'
-import { useForm } from '@/composables/useForm'
-import { useAppToast } from '@/composables/useAppToast'
-import { usePermissions } from '@/composables/usePermissions'
-import { useFormatters } from '@/composables/useFormatters'
-import { useAuthStore } from '@/core/stores/auth.store'
-import { ApiError } from '@/core/services/api.service'
-import { userService } from '@/core/services/user.service'
-import type { Role, User } from '@/core/models'
+import { computed, onMounted, ref } from 'vue';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
+import MultiSelect from 'primevue/multiselect';
+import Select from 'primevue/select';
+import Tag from 'primevue/tag';
+import { useConfirm } from 'primevue/useconfirm';
+import AppCrudTable, { type CrudColumn } from '@/molecules/AppCrudTable.vue';
+import AppModal from '@/molecules/AppModal.vue';
+import { useDataTable } from '@/composables/useDataTable';
+import { useForm } from '@/composables/useForm';
+import { useAppToast } from '@/composables/useAppToast';
+import { usePermissions } from '@/composables/usePermissions';
+import { useFormatters } from '@/composables/useFormatters';
+import { useAuthStore } from '@/core/stores/auth.store';
+import { ApiError } from '@/core/services/api.service';
+import { userService } from '@/core/services/user.service';
+import type { Role, User } from '@/core/models';
 
-const toast = useAppToast()
-const confirm = useConfirm()
-const auth = useAuthStore()
-const { can } = usePermissions()
-const { formatDate } = useFormatters()
-const canManage = computed(() => can('users.manage'))
+const toast = useAppToast();
+const confirm = useConfirm();
+const auth = useAuthStore();
+const { can } = usePermissions();
+const { formatDate } = useFormatters();
+const canManage = computed(() => can('users.manage'));
 
 const columns: CrudColumn[] = [
   { key: 'name', label: 'Nombre', sortable: true, toggleable: false },
   { key: 'email', label: 'Email', sortable: true },
   { key: 'roles', label: 'Roles' },
   { key: 'created_at', label: 'Alta', sortable: true, defaultVisible: false },
-]
+];
 
 const table = useDataTable<User>({
   fetchFn: (params) => userService.list(params),
   defaultSortBy: 'name',
   defaultSortDir: 'asc',
   persistKey: 'settings.users',
-})
+});
 
-const roles = ref<Role[]>([])
-const roleOptions = computed(() => roles.value.map((r) => ({ label: r.name, value: r.name })))
+const roles = ref<Role[]>([]);
+const roleOptions = computed(() => roles.value.map((r) => ({ label: r.name, value: r.name })));
 const roleFilter = computed({
   get: () => (table.filters.role as string | undefined) ?? null,
-  set: (value: string | null) => (value ? table.setFilter('role', value) : table.clearFilter('role')),
-})
+  set: (value: string | null) =>
+    value ? table.setFilter('role', value) : table.clearFilter('role'),
+});
 
 onMounted(async () => {
-  table.fetch()
+  table.fetch();
   try {
-    roles.value = (await userService.roles()).data.data
+    roles.value = (await userService.roles()).data.data;
   } catch {
     /* the shell already toasts API failures */
   }
-})
+});
 
 // --- Create / edit ---
-const showForm = ref(false)
-const editing = ref<User | null>(null)
+const showForm = ref(false);
+const editing = ref<User | null>(null);
 const form = useForm({
   name: '',
   email: '',
   password: '',
   password_confirmation: '',
   roles: [] as string[],
-})
+});
 
 function openCreate() {
-  editing.value = null
-  form.reset()
-  showForm.value = true
+  editing.value = null;
+  form.reset();
+  showForm.value = true;
 }
 
 function openEdit(user: User) {
-  editing.value = user
-  form.reset({ name: user.name, email: user.email, roles: [...user.roles] })
-  showForm.value = true
+  editing.value = user;
+  form.reset({ name: user.name, email: user.email, roles: [...user.roles] });
+  showForm.value = true;
 }
 
 async function save() {
   try {
     await form.submit(async () => {
       if (editing.value) {
-        await userService.update(editing.value.id, { name: form.data.name, email: form.data.email })
-        await userService.syncRoles(editing.value.id, form.data.roles)
+        await userService.update(editing.value.id, {
+          name: form.data.name,
+          email: form.data.email,
+        });
+        await userService.syncRoles(editing.value.id, form.data.roles);
       } else {
-        await userService.create({ ...form.data })
+        await userService.create({ ...form.data });
       }
-    })
-    toast.success(editing.value ? 'Usuario actualizado' : 'Usuario creado')
-    showForm.value = false
-    table.fetch()
+    });
+    toast.success(editing.value ? 'Usuario actualizado' : 'Usuario creado');
+    showForm.value = false;
+    table.fetch();
   } catch (e) {
-    if (e instanceof ApiError && !e.isValidation) toast.error(e.message)
+    if (e instanceof ApiError && !e.isValidation) toast.error(e.message);
   }
 }
 
 // --- Admin password reset ---
-const passwordTarget = ref<User | null>(null)
-const passwordForm = useForm({ password: '', password_confirmation: '' })
+const passwordTarget = ref<User | null>(null);
+const passwordForm = useForm({ password: '', password_confirmation: '' });
 
 function openPassword(user: User) {
-  passwordTarget.value = user
-  passwordForm.reset()
+  passwordTarget.value = user;
+  passwordForm.reset();
 }
 
 async function savePassword() {
-  const target = passwordTarget.value
-  if (!target) return
+  const target = passwordTarget.value;
+  if (!target) return;
   try {
     const { data } = await passwordForm.submit(() =>
-      userService.setPassword(target.id, passwordForm.data.password, passwordForm.data.password_confirmation),
-    )
-    toast.success(data.message)
-    passwordTarget.value = null
+      userService.setPassword(
+        target.id,
+        passwordForm.data.password,
+        passwordForm.data.password_confirmation,
+      ),
+    );
+    toast.success(data.message);
+    passwordTarget.value = null;
   } catch (e) {
-    if (e instanceof ApiError && !e.isValidation) toast.error(e.message)
+    if (e instanceof ApiError && !e.isValidation) toast.error(e.message);
   }
 }
 
@@ -137,14 +145,15 @@ function confirmDelete(user: User) {
     defaultFocus: 'reject',
     accept: async () => {
       try {
-        await userService.destroy(user.id)
-        toast.success('Usuario eliminado')
-        table.fetch()
+        await userService.destroy(user.id);
+        toast.success('Usuario eliminado');
+        table.fetch();
       } catch (e) {
-        if (e instanceof ApiError) toast.error(e.fieldError('user') ?? e.fieldError('roles') ?? e.message)
+        if (e instanceof ApiError)
+          toast.error(e.fieldError('user') ?? e.fieldError('roles') ?? e.message);
       }
     },
-  })
+  });
 }
 </script>
 
@@ -200,50 +209,96 @@ function confirmDelete(user: User) {
       <template #cell-created_at="{ item }">{{ formatDate(item.created_at) }}</template>
 
       <template #actions="{ item }">
-        <Button icon="pi pi-pencil" text rounded size="small" aria-label="Editar" v-tooltip.top="'Editar'" @click="openEdit(item)" />
-        <Button icon="pi pi-key" text rounded size="small" aria-label="Cambiar contraseña" v-tooltip.top="'Cambiar contraseña'" @click="openPassword(item)" />
         <Button
+          v-tooltip.top="'Editar'"
+          icon="pi pi-pencil"
+          text
+          rounded
+          size="small"
+          aria-label="Editar"
+          @click="openEdit(item)"
+        />
+        <Button
+          v-tooltip.top="'Cambiar contraseña'"
+          icon="pi pi-key"
+          text
+          rounded
+          size="small"
+          aria-label="Cambiar contraseña"
+          @click="openPassword(item)"
+        />
+        <Button
+          v-tooltip.top="'Eliminar'"
           icon="pi pi-trash"
           text
           rounded
           size="small"
           severity="danger"
           aria-label="Eliminar"
-          v-tooltip.top="'Eliminar'"
           :disabled="item.id === auth.user?.id"
           @click="confirmDelete(item)"
         />
       </template>
     </AppCrudTable>
 
-    <AppModal :show="showForm" :title="editing ? 'Editar usuario' : 'Nuevo usuario'" @close="showForm = false">
+    <AppModal
+      :show="showForm"
+      :title="editing ? 'Editar usuario' : 'Nuevo usuario'"
+      @close="showForm = false"
+    >
       <form id="user-form" class="form" @submit.prevent="save">
         <div class="form__field">
           <label for="user-name">Nombre</label>
-          <InputText id="user-name" v-model="form.data.name" :invalid="form.hasError('name')" autocomplete="off" />
+          <InputText
+            id="user-name"
+            v-model="form.data.name"
+            :invalid="form.hasError('name')"
+            autocomplete="off"
+          />
           <small v-if="form.error('name')" class="form__error">{{ form.error('name') }}</small>
         </div>
         <div class="form__field">
           <label for="user-email">Email</label>
-          <InputText id="user-email" v-model="form.data.email" type="email" :invalid="form.hasError('email')" autocomplete="off" />
+          <InputText
+            id="user-email"
+            v-model="form.data.email"
+            type="email"
+            :invalid="form.hasError('email')"
+            autocomplete="off"
+          />
           <small v-if="form.error('email')" class="form__error">{{ form.error('email') }}</small>
         </div>
         <template v-if="!editing">
           <div class="form__field">
             <label for="user-password">Contraseña</label>
-            <Password input-id="user-password" v-model="form.data.password" :feedback="false" toggle-mask fluid :invalid="form.hasError('password')" />
-            <small v-if="form.error('password')" class="form__error">{{ form.error('password') }}</small>
+            <Password
+              v-model="form.data.password"
+              input-id="user-password"
+              :feedback="false"
+              toggle-mask
+              fluid
+              :invalid="form.hasError('password')"
+            />
+            <small v-if="form.error('password')" class="form__error">{{
+              form.error('password')
+            }}</small>
           </div>
           <div class="form__field">
             <label for="user-password-confirmation">Repetir contraseña</label>
-            <Password input-id="user-password-confirmation" v-model="form.data.password_confirmation" :feedback="false" toggle-mask fluid />
+            <Password
+              v-model="form.data.password_confirmation"
+              input-id="user-password-confirmation"
+              :feedback="false"
+              toggle-mask
+              fluid
+            />
           </div>
         </template>
         <div class="form__field">
           <label for="user-roles">Roles</label>
           <MultiSelect
-            input-id="user-roles"
             v-model="form.data.roles"
+            input-id="user-roles"
             :options="roleOptions"
             option-label="label"
             option-value="value"
@@ -260,22 +315,47 @@ function confirmDelete(user: User) {
       </template>
     </AppModal>
 
-    <AppModal :show="passwordTarget !== null" :title="`Contraseña de ${passwordTarget?.name ?? ''}`" size="sm" @close="passwordTarget = null">
+    <AppModal
+      :show="passwordTarget !== null"
+      :title="`Contraseña de ${passwordTarget?.name ?? ''}`"
+      size="sm"
+      @close="passwordTarget = null"
+    >
       <form id="password-form" class="form" @submit.prevent="savePassword">
         <div class="form__field">
           <label for="new-password">Nueva contraseña</label>
-          <Password input-id="new-password" v-model="passwordForm.data.password" :feedback="false" toggle-mask fluid :invalid="passwordForm.hasError('password')" />
-          <small v-if="passwordForm.error('password')" class="form__error">{{ passwordForm.error('password') }}</small>
+          <Password
+            v-model="passwordForm.data.password"
+            input-id="new-password"
+            :feedback="false"
+            toggle-mask
+            fluid
+            :invalid="passwordForm.hasError('password')"
+          />
+          <small v-if="passwordForm.error('password')" class="form__error">{{
+            passwordForm.error('password')
+          }}</small>
         </div>
         <div class="form__field">
           <label for="new-password-confirmation">Repetir contraseña</label>
-          <Password input-id="new-password-confirmation" v-model="passwordForm.data.password_confirmation" :feedback="false" toggle-mask fluid />
+          <Password
+            v-model="passwordForm.data.password_confirmation"
+            input-id="new-password-confirmation"
+            :feedback="false"
+            toggle-mask
+            fluid
+          />
         </div>
         <small class="page__muted">El usuario queda deslogueado de todas sus sesiones.</small>
       </form>
       <template #footer>
         <Button label="Cancelar" severity="secondary" text @click="passwordTarget = null" />
-        <Button label="Guardar" type="submit" form="password-form" :loading="passwordForm.processing.value" />
+        <Button
+          label="Guardar"
+          type="submit"
+          form="password-form"
+          :loading="passwordForm.processing.value"
+        />
       </template>
     </AppModal>
   </div>

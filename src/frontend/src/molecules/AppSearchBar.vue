@@ -1,31 +1,36 @@
 <script setup lang="ts">
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
-import InputText from 'primevue/inputtext'
-import { ref, watch } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
+import { ref, watch } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
 
 const props = defineProps<{
-  modelValue: string
-  placeholder?: string
-}>()
+  modelValue: string;
+  placeholder?: string;
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
-}>()
+  'update:modelValue': [value: string];
+}>();
 
-const localValue = ref(props.modelValue)
+const localValue = ref(props.modelValue);
 
 const debouncedEmit = useDebounceFn((val: string) => {
-  emit('update:modelValue', val)
-}, 300)
+  emit('update:modelValue', val);
+}, 300);
 
-watch(localValue, (val) => debouncedEmit(val))
-watch(() => props.modelValue, (val) => { localValue.value = val })
+watch(localValue, (val) => debouncedEmit(val));
+watch(
+  () => props.modelValue,
+  (val) => {
+    localValue.value = val;
+  },
+);
 
 function clear() {
-  localValue.value = ''
-  emit('update:modelValue', '')
+  localValue.value = '';
+  emit('update:modelValue', '');
 }
 </script>
 
@@ -78,7 +83,9 @@ function clear() {
   background: transparent;
   color: var(--p-text-muted-color);
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
 }
 
 .clear-btn:hover {

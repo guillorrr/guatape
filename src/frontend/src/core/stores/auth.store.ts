@@ -93,7 +93,12 @@ export const useAuthStore = defineStore('auth', () => {
     return response.data.message;
   }
 
-  async function resetPassword(payload: { token: string; email: string; password: string; password_confirmation: string }): Promise<string> {
+  async function resetPassword(payload: {
+    token: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  }): Promise<string> {
     await ensureCsrfCookie();
     const response = await api.post<{ message: string }>('/auth/reset-password', payload);
     return response.data.message;

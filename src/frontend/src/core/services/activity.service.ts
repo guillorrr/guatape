@@ -72,7 +72,8 @@ export interface CatalogCommand {
 }
 
 export const activityService = {
-  list: (params?: Record<string, string | number>) => api.get<PaginatedResponse<JobRun>>('/system/activity', { params }),
+  list: (params?: Record<string, string | number>) =>
+    api.get<PaginatedResponse<JobRun>>('/system/activity', { params }),
   show: (id: number) => api.get<ItemResponse<JobRun>>(`/system/activity/${id}`),
   stats: () => api.get<ItemResponse<ActivityStats>>('/system/activity/stats'),
   schedule: () => api.get<{ data: ScheduledTask[] }>('/system/schedule'),

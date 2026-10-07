@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const appName = import.meta.env.VITE_APP_NAME || 'Guatape'
+const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 </script>
 
 <template>
@@ -18,14 +18,14 @@ const appName = import.meta.env.VITE_APP_NAME || 'Guatape'
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: var(--p-surface-ground);
+  background: var(--app-surface-ground);
 }
 
 .auth-layout__card {
   width: 100%;
   max-width: 400px;
-  background: var(--p-surface-card);
-  border: 1px solid var(--p-surface-border);
+  background: var(--app-surface-card);
+  border: 1px solid var(--app-surface-border);
   border-radius: 12px;
   padding: 32px 24px;
   display: flex;

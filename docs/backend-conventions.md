@@ -67,6 +67,25 @@ DuplicateKeyResponder::resolveOwnerUsing('products', fn (string $column, string 
 `DELETE /attachments/{id}`. Files go to `ATTACHMENTS_DISK` (private; downloads
 go through the API).
 
+## Rich text
+
+Columns edited with the SPA's `AppRichText` get the `SanitizedHtml` cast:
+every write goes through `HtmlSanitizer`, which keeps the editor's formats
+(paragraphs, h2/h3, bold, italic, underline, strike, lists, quotes, http(s)
+links) and drops everything else.
+
+```php
+protected function casts(): array { return ['description' => SanitizedHtml::class]; }
+```
+
+## Translations
+
+`APP_LOCALE=es` by default. Framework messages live in `lang/es/*.php`; the
+app's own sentences use `__('English sentence.')` with the Spanish in
+`lang/es.json`. `tests/Unit/TranslationsTest.php` fails when a framework key
+or a literal `__()` string has no Spanish translation. Field names for
+validation messages: `lang/es/validation.php` → `attributes`.
+
 ## Runtime settings
 
 `AppSetting::get('key', $default)` / `AppSetting::set('key', $value)`: values

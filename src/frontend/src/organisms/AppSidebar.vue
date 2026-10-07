@@ -1,55 +1,55 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { computed, ref } from 'vue'
-import { useLayoutStore } from '@/core/stores/layout.store'
-import { usePermissions } from '@/composables/usePermissions'
-import { menu, type MenuItem } from '@/core/navigation'
+import { useRoute, useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useLayoutStore } from '@/core/stores/layout.store';
+import { usePermissions } from '@/composables/usePermissions';
+import { menu, type MenuItem } from '@/core/navigation';
 
-const route = useRoute()
-const router = useRouter()
-const layout = useLayoutStore()
-const { canAny } = usePermissions()
-const appName = import.meta.env.VITE_APP_NAME || 'Guatape'
+const route = useRoute();
+const router = useRouter();
+const layout = useLayoutStore();
+const { canAny } = usePermissions();
+const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 
 function allowed(item: MenuItem): boolean {
-  if (!item.permission) return true
-  const required = Array.isArray(item.permission) ? item.permission : [item.permission]
-  return canAny(...required)
+  if (!item.permission) return true;
+  const required = Array.isArray(item.permission) ? item.permission : [item.permission];
+  return canAny(...required);
 }
 
 const visibleMenuItems = computed<MenuItem[]>(() =>
   menu
     .filter(allowed)
-    .map(item => (item.children ? { ...item, children: item.children.filter(allowed) } : item))
-    .filter(item => !item.children || item.children.length > 0),
-)
+    .map((item) => (item.children ? { ...item, children: item.children.filter(allowed) } : item))
+    .filter((item) => !item.children || item.children.length > 0),
+);
 
 function isActive(to: string): boolean {
-  if (to === '/app') return route.path === '/app'
-  return route.path.startsWith(to)
+  if (to === '/app') return route.path === '/app';
+  return route.path.startsWith(to);
 }
 
 function isGroupActive(item: MenuItem): boolean {
-  return item.children?.some(c => c.to && isActive(c.to)) ?? false
+  return item.children?.some((c) => c.to && isActive(c.to)) ?? false;
 }
 
-const expanded = ref<Set<string>>(new Set(
-  visibleMenuItems.value.filter(m => m.children && isGroupActive(m)).map(m => m.label)
-))
+const expanded = ref<Set<string>>(
+  new Set(visibleMenuItems.value.filter((m) => m.children && isGroupActive(m)).map((m) => m.label)),
+);
 
 function onGroupClick(item: MenuItem) {
   // Open → collapse.
   if (expanded.value.has(item.label)) {
-    expanded.value.clear()
-    return
+    expanded.value.clear();
+    return;
   }
   // Collapsed → open (accordion, one at a time) and navigate to the group's
   // first page, unless we're already on it.
-  expanded.value = new Set([item.label])
-  const first = item.children?.find(c => c.to)
+  expanded.value = new Set([item.label]);
+  const first = item.children?.find((c) => c.to);
   if (first?.to && route.path !== first.to) {
-    router.push(first.to)
-    layout.closeOnMobile()
+    router.push(first.to);
+    layout.closeOnMobile();
   }
 }
 </script>
@@ -57,7 +57,7 @@ function onGroupClick(item: MenuItem) {
 <template>
   <aside class="sidebar" :class="{ 'sidebar--collapsed': !layout.sidebarOpen }">
     <div class="sidebar__brand">
-      <i class="pi pi-th-large" style="font-size: 1.4rem;" />
+      <i class="pi pi-th-large" style="font-size: 1.4rem" />
       <span>{{ appName }}</span>
     </div>
     <nav class="sidebar__nav">
@@ -81,7 +81,10 @@ function onGroupClick(item: MenuItem) {
           >
             <i :class="item.icon" />
             <span>{{ item.label }}</span>
-            <i class="pi pi-chevron-down nav-group__arrow" :class="{ 'nav-group__arrow--open': expanded.has(item.label) }" />
+            <i
+              class="pi pi-chevron-down nav-group__arrow"
+              :class="{ 'nav-group__arrow--open': expanded.has(item.label) }"
+            />
           </button>
           <transition name="slide">
             <div v-show="expanded.has(item.label)" class="nav-group__items">
@@ -235,15 +238,18 @@ function onGroupClick(item: MenuItem) {
   margin-top: 2px;
 }
 
-.slide-enter-active, .slide-leave-active {
+.slide-enter-active,
+.slide-leave-active {
   transition: all 0.2s ease;
   overflow: hidden;
 }
-.slide-enter-from, .slide-leave-to {
+.slide-enter-from,
+.slide-leave-to {
   opacity: 0;
   max-height: 0;
 }
-.slide-enter-to, .slide-leave-from {
+.slide-enter-to,
+.slide-leave-from {
   opacity: 1;
   max-height: 600px;
 }

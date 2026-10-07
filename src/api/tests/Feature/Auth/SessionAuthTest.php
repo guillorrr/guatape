@@ -44,6 +44,19 @@ class SessionAuthTest extends TestCase
         $this->assertGuest('web');
     }
 
+    public function test_messages_follow_the_app_locale(): void
+    {
+        app()->setLocale('es');
+        $user = User::factory()->create(['password' => 'secret-pass']);
+
+        $this->postJson('/api/v1/auth/login', ['email' => $user->email, 'password' => 'nope'])
+            ->assertJsonPath('errors.email.0', 'El email o la contraseña no son correctos.');
+
+        $this->postJson('/api/v1/auth/login', ['email' => '', 'password' => ''])
+            ->assertJsonPath('errors.email.0', 'El campo email es obligatorio.')
+            ->assertJsonPath('errors.password.0', 'El campo contraseña es obligatorio.');
+    }
+
     public function test_login_is_throttled_after_five_failures(): void
     {
         $user = User::factory()->create(['password' => 'secret-pass']);
