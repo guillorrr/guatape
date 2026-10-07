@@ -1,5 +1,6 @@
 import { api } from '@/core/services/api.service';
 import type { ItemResponse, PaginatedResponse, Role, User } from '@/core/models';
+import type { RemoteOption } from '@/molecules/AppRemoteSelect.vue';
 
 export interface UserPayload {
   name: string;
@@ -33,6 +34,13 @@ export const userService = {
       password,
       password_confirmation,
     });
+  },
+  /** Options for AppRemoteSelect: first 20 matches of `search`, optionally by role. */
+  async options(search: string, params: Record<string, unknown> = {}): Promise<RemoteOption[]> {
+    const { data } = await api.get<PaginatedResponse<User>>('/users', {
+      params: { search, per_page: 20, sort_by: 'name', ...params },
+    });
+    return data.data.map((u) => ({ value: u.id, label: u.name, description: u.email }));
   },
   roles() {
     return api.get<{ data: Role[] }>('/roles');

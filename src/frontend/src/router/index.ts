@@ -70,6 +70,17 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/settings/UserListPage.vue'),
         meta: { title: 'Usuarios', permission: 'users.view' },
       },
+      // Living reference of the form kit, development builds only.
+      ...(import.meta.env.DEV
+        ? [
+            {
+              path: 'dev/form-kit',
+              name: 'dev-form-kit',
+              component: () => import('@/pages/dev/FormKitPage.vue'),
+              meta: { title: 'Kit de formularios' },
+            },
+          ]
+        : []),
       {
         path: 'system',
         meta: { permission: 'system.view' },

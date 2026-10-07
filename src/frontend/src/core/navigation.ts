@@ -47,4 +47,8 @@ export const menu: MenuItem[] = [
       },
     ],
   },
+  // Development only: living reference of the form kit (pages/dev/FormKitPage.vue).
+  ...(import.meta.env.DEV
+    ? [{ label: 'Kit de formularios', icon: 'pi pi-palette', to: '/app/dev/form-kit' }]
+    : []),
 ];
