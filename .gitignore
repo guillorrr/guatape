@@ -12,6 +12,7 @@ src/api/vendor/
 # Build output
 dist/
 src/frontend/dist/
+src/frontend/storybook-static/
 
 # IDE
 .idea/
