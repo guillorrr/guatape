@@ -2,10 +2,11 @@
 import AppHeader from '@/organisms/AppHeader.vue';
 </script>
 
+<!-- Public pages (landing, legal…). The authenticated area uses DashboardLayout. -->
 <template>
   <AppHeader />
   <main class="app-main">
-    <slot />
+    <RouterView />
   </main>
 </template>
 

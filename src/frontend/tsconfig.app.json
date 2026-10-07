@@ -8,6 +8,10 @@
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    // Type-check only. Without this `vue-tsc -b` writes a .js next to every
+    // .ts/.vue, and Vite then serves those stale files instead of the sources.
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

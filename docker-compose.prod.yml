@@ -1,0 +1,86 @@
+# Production stack. Run from the deploy clone with:
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod -p <project> up -d --build
+# Every container that runs Laravel gets .env.prod as its environment, so a new
+# variable is added once, in .env.prod (and documented in .env.prod.example).
+
+x-laravel: &laravel
+  build:
+    context: ./docker/api
+    dockerfile: Dockerfile
+  image: ${APP_NAME:-guatape}-api:prod
+  restart: unless-stopped
+  working_dir: /var/www/api
+  env_file: .env.prod
+  volumes:
+    - ./src/api:/var/www/api
+    - api_vendor:/var/www/api/vendor
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_started
+  networks:
+    - app-network
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  api:
+    <<: *laravel
+
+  queue-worker:
+    <<: *laravel
+    command: php artisan queue:work redis --queue=default --tries=3 --timeout=120 --sleep=3 --max-time=3600
+
+  scheduler:
+    <<: *laravel
+    command: php artisan schedule:work
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile.prod
+    image: ${APP_NAME:-guatape}-nginx:prod
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./src/api/public:/var/www/api/public:ro
+      - ./src/api/storage/app/public:/var/www/api/storage/app/public:ro
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+  redis_data:
+  api_vendor:
+
+networks:
+  app-network:
+    driver: bridge

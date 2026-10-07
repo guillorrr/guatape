@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'print';
 
 *,
 *::before,
@@ -14,14 +15,14 @@ html {
 
 body {
   font-family: $font-family;
-  color: $gray-900;
-  background-color: $gray-100;
+  color: var(--p-text-color);
+  background-color: var(--p-surface-ground);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
 a {
-  color: $primary;
+  color: var(--p-primary-color);
   text-decoration: none;
 
   &:hover {
@@ -33,4 +34,14 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+// PrimeVue DataTable refinements
+.p-datatable {
+  .p-datatable-header-cell {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+  }
 }

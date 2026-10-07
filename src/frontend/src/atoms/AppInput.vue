@@ -1,78 +1,71 @@
 <script setup lang="ts">
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import { computed } from 'vue'
+
 export interface AppInputProps {
-  label?: string;
-  type?: string;
-  placeholder?: string;
-  error?: string;
-  required?: boolean;
+  label?: string
+  type?: string
+  placeholder?: string
+  error?: string
+  required?: boolean
 }
 
-withDefaults(defineProps<AppInputProps>(), {
+const props = withDefaults(defineProps<AppInputProps>(), {
   type: 'text',
   label: undefined,
   placeholder: undefined,
   error: undefined,
   required: false,
-});
+})
 
-const model = defineModel<string>();
+const model = defineModel<string | number>()
+
+const isNumber = computed(() => props.type === 'number')
+
+// InputNumber binds numbers and InputText strings; narrow the shared model.
+const numberModel = computed({
+  get: () => (typeof model.value === 'number' ? model.value : model.value ? Number(model.value) : null),
+  set: (v: number | null) => { model.value = v ?? undefined },
+})
+const textModel = computed({
+  get: () => (model.value == null ? '' : String(model.value)),
+  set: (v: string | undefined) => { model.value = v },
+})
 </script>
 
 <template>
-  <div class="input-field" :class="{ 'input-field--error': error }">
-    <label v-if="label" class="input-field__label">
+  <div class="field">
+    <label v-if="label" class="field__label">
       {{ label }}
-      <span v-if="required" class="input-field__required">*</span>
+      <span v-if="required" class="field__required">*</span>
     </label>
-    <input
-      v-model="model"
+    <InputNumber
+      v-if="isNumber"
+      v-model="numberModel"
+      :placeholder="placeholder"
+      :disabled="false"
+      :invalid="!!error"
+      :min-fraction-digits="0"
+      :max-fraction-digits="2"
+      fluid
+    />
+    <InputText
+      v-else
+      v-model="textModel"
       :type="type"
       :placeholder="placeholder"
       :required="required"
-      class="input-field__input"
+      :invalid="!!error"
+      fluid
     />
-    <span v-if="error" class="input-field__error">{{ error }}</span>
+    <small v-if="error" class="field__error">{{ error }}</small>
   </div>
 </template>
 
-<style scoped lang="scss">
-.input-field {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-
-  &__label {
-    font-size: $font-size-sm;
-    font-weight: 500;
-    color: $gray-700;
-  }
-
-  &__required {
-    color: $danger;
-  }
-
-  &__input {
-    padding: $spacing-sm $spacing-md;
-    border: 1px solid $gray-300;
-    border-radius: $border-radius-sm;
-    font-size: $font-size-base;
-    font-family: $font-family;
-    transition: border-color 0.15s ease;
-
-    &:focus {
-      outline: none;
-      border-color: $primary;
-      box-shadow: 0 0 0 2px rgba($primary, 0.2);
-    }
-  }
-
-  &--error &__input {
-    border-color: $danger;
-  }
-
-  &__error {
-    font-size: $font-size-sm;
-    color: $danger;
-  }
-}
+<style scoped>
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field__label { font-size: 0.85rem; font-weight: 500; color: var(--p-text-color); }
+.field__required { color: var(--p-red-500); }
+.field__error { color: var(--p-red-500); font-size: 0.75rem; }
 </style>

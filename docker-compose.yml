@@ -13,6 +13,7 @@ services:
       - "${DB_PORT:-3306}:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./docker/db/init:/docker-entrypoint-initdb.d:ro
     networks:
       - app-network
     healthcheck:
@@ -22,7 +23,7 @@ services:
       retries: 5
 
   # --- Laravel API ---
-  api:
+  api: &api
     build:
       context: ./docker/api
       dockerfile: Dockerfile
@@ -46,6 +47,7 @@ services:
     volumes:
       - ./src/api:/var/www/api
       - api_vendor:/var/www/api/vendor
+      - ./docker/api/php-dev.ini:/usr/local/etc/php/conf.d/zz-dev.ini:ro
     ports:
       - "${API_PORT:-9000}:9000"
     depends_on:
@@ -55,6 +57,23 @@ services:
         condition: service_started
     networks:
       - app-network
+
+  # --- Queue worker ---
+  # Same image and env as the api. Add one service per queue that must not wait
+  # behind another (e.g. slow exports vs. emails): --queue=exports, etc.
+  queue-worker:
+    <<: *api
+    container_name: ${APP_NAME}-queue-worker
+    command: php artisan queue:work redis --queue=default --tries=3 --timeout=120 --sleep=3
+    ports: []
+
+  # --- Scheduler ---
+  # Runs routes/console.php every minute. Every run lands in job_runs (Activity page).
+  scheduler:
+    <<: *api
+    container_name: ${APP_NAME}-scheduler
+    command: php artisan schedule:work
+    ports: []
 
   # --- Vue 3 Frontend ---
   frontend:

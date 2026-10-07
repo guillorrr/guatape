@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/core/stores/auth.store';
+import { useAuthStore } from '@/core/stores/auth.store'
 
-const auth = useAuthStore();
+const auth = useAuthStore()
 </script>
 
 <template>
   <div class="dashboard-page">
-    <h1>Dashboard</h1>
-    <p v-if="auth.user">Bienvenido, {{ auth.user.name }}</p>
+    <h1>Inicio</h1>
+    <p v-if="auth.user">Hola, {{ auth.user.name }}.</p>
   </div>
 </template>
 
-<style scoped lang="scss">
-.dashboard-page {
-  h1 {
-    font-size: $font-size-2xl;
-    margin-bottom: $spacing-md;
-  }
+<style scoped>
+.dashboard-page h1 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
 }
 </style>
