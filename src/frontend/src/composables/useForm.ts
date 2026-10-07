@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue';
+import { isProxy, reactive, ref, toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 import { ApiError } from '@/core/services/api.service';
 
@@ -12,8 +12,26 @@ import { ApiError } from '@/core/services/api.service';
  * `submit` rethrows the error so the caller can still toast or branch on it;
  * 422 field errors are already stored by then.
  */
+/**
+ * structuredClone throws on Vue proxies, and form values often come from a
+ * store or a reactive API payload; unwrap at every level first.
+ */
+function cloneDeep<V>(value: V): V {
+  const unwrap = (v: unknown): unknown => {
+    const raw = isProxy(v) ? toRaw(v) : v;
+    if (Array.isArray(raw)) return raw.map(unwrap);
+    if (raw && typeof raw === 'object' && Object.getPrototypeOf(raw) === Object.prototype) {
+      return Object.fromEntries(Object.entries(raw).map(([k, item]) => [k, unwrap(item)]));
+    }
+    return raw;
+  };
+  return structuredClone(unwrap(value)) as V;
+}
+
 export function useForm<T extends Record<string, unknown>>(initial: T) {
-  const data = reactive({ ...initial }) as UnwrapRef<T>;
+  // Deep copies: a shallow one would share arrays/objects with `initial`, so
+  // editing form.data.roles would also change what reset() restores.
+  const data = reactive(cloneDeep(initial)) as UnwrapRef<T>;
   const errors = ref<Record<string, string[]>>({});
   const processing = ref(false);
 
@@ -30,7 +48,7 @@ export function useForm<T extends Record<string, unknown>>(initial: T) {
   }
 
   function reset(values: Partial<T> = {}): void {
-    Object.assign(data as object, initial, values);
+    Object.assign(data as object, cloneDeep(initial), cloneDeep(values));
     clearErrors();
   }
 
