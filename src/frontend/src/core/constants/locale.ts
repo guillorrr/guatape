@@ -6,8 +6,8 @@
  * toLocaleString uses the runtime's zone and shows UTC hours on servers and
  * containers. Override with VITE_LOCALE / VITE_TIME_ZONE (src/frontend/.env).
  */
-export const LOCALE: string = import.meta.env.VITE_LOCALE || 'es-AR'
+export const LOCALE: string = import.meta.env.VITE_LOCALE || 'es-AR';
 
-export const TIME_ZONE: string = import.meta.env.VITE_TIME_ZONE || 'America/Argentina/Buenos_Aires'
+export const TIME_ZONE: string = import.meta.env.VITE_TIME_ZONE || 'America/Argentina/Buenos_Aires';
 
-export const CURRENCY: string = import.meta.env.VITE_CURRENCY || 'ARS'
+export const CURRENCY: string = import.meta.env.VITE_CURRENCY || 'ARS';

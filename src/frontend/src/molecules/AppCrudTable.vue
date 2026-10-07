@@ -61,6 +61,10 @@ const props = withDefaults(
     actionsWidth: '110px',
     dataKey: 'id',
     expandable: false,
+    persistKey: undefined,
+    selection: undefined,
+    selectionMode: undefined,
+    editMode: undefined,
   },
 )
 
@@ -142,6 +146,11 @@ function onSort(event: DataTableSortEvent) {
   emit('sort', event.sortField, event.sortOrder === 1 ? 'asc' : 'desc')
 }
 
+/** Generic rows are typed T; read a column by key without casting in the template. */
+function cellValue(item: T, key: string): unknown {
+  return (item as Record<string, unknown>)[key]
+}
+
 function onRowClick(e: { data: T }) {
   if (props.rowClickable) emit('row-click', e.data)
 }
@@ -189,6 +198,7 @@ function resetVisibleColumns() {
     </div>
 
     <DataTable
+      v-model:expanded-rows="expandedRows"
       :value="data"
       :loading="loading"
       size="small"
@@ -199,7 +209,6 @@ function resetVisibleColumns() {
       :selection-mode="selectionMode === 'single' ? 'single' : undefined"
       :data-key="dataKey"
       :edit-mode="editMode"
-      v-model:expanded-rows="expandedRows"
       :class="{ 'crud-clickable': rowClickable }"
       @sort="onSort"
       @row-click="onRowClick"
@@ -230,9 +239,9 @@ function resetVisibleColumns() {
           <slot
             :name="`cell-${col.key}`"
             :item="item"
-            :value="(item as Record<string, unknown>)[col.key]"
+            :value="cellValue(item, col.key)"
           >
-            {{ (item as Record<string, unknown>)[col.key] ?? '—' }}
+            {{ cellValue(item, col.key) ?? '—' }}
           </slot>
         </template>
         <template

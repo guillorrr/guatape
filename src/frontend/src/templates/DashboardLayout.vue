@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import AppSidebar from '@/organisms/AppSidebar.vue'
-import EnvBadge from '@/molecules/EnvBadge.vue'
-import { useAuthStore } from '@/core/stores/auth.store'
-import { useLayoutStore } from '@/core/stores/layout.store'
-import { storeToRefs } from 'pinia'
-import Button from 'primevue/button'
-import { useRouter } from 'vue-router'
+import AppSidebar from '@/organisms/AppSidebar.vue';
+import EnvBadge from '@/molecules/EnvBadge.vue';
+import { useAuthStore } from '@/core/stores/auth.store';
+import { useLayoutStore } from '@/core/stores/layout.store';
+import { storeToRefs } from 'pinia';
+import Button from 'primevue/button';
+import { useRouter } from 'vue-router';
 
-const auth = useAuthStore()
-const router = useRouter()
+const auth = useAuthStore();
+const router = useRouter();
 
 // Collapsible sidebar. The store wires the viewport breakpoint once (auto
 // collapse on small screens, push content on large); the hamburger toggles it
 // and a manual toggle survives route changes.
-const layout = useLayoutStore()
-const { sidebarOpen, isMobile } = storeToRefs(layout)
-layout.initResponsive()
+const layout = useLayoutStore();
+const { sidebarOpen, isMobile } = storeToRefs(layout);
+layout.initResponsive();
 
 async function logout() {
-  await auth.logout()
-  await router.push({ name: 'login' })
+  await auth.logout();
+  await router.push({ name: 'login' });
 }
 </script>
 
@@ -35,6 +35,7 @@ async function logout() {
       <header class="layout__topbar">
         <div class="layout__topbar-left">
           <Button
+            v-tooltip.bottom="'Mostrar/ocultar menú'"
             icon="pi pi-bars"
             text
             rounded
@@ -42,7 +43,6 @@ async function logout() {
             size="small"
             class="layout__menu-toggle"
             aria-label="Mostrar u ocultar el menú"
-            v-tooltip.bottom="'Mostrar/ocultar menú'"
             @click="layout.toggleSidebar()"
           />
         </div>
@@ -54,13 +54,13 @@ async function logout() {
             <span>{{ auth.user?.name }}</span>
           </button>
           <Button
+            v-tooltip.bottom="'Cerrar sesión'"
             icon="pi pi-sign-out"
             text
             rounded
             severity="secondary"
             size="small"
             aria-label="Cerrar sesión"
-            v-tooltip.bottom="'Cerrar sesión'"
             @click="logout"
           />
         </div>

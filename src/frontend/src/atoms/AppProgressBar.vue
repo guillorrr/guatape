@@ -1,11 +1,11 @@
 <script setup lang="ts">
 defineProps<{
-  value: number
-  max?: number
-  variant?: 'primary' | 'success' | 'warning' | 'danger'
-  showLabel?: boolean
-  height?: string
-}>()
+  value: number;
+  max?: number;
+  variant?: 'primary' | 'success' | 'warning' | 'danger';
+  showLabel?: boolean;
+  height?: string;
+}>();
 </script>
 
 <template>
@@ -15,7 +15,9 @@ defineProps<{
       :class="`progress__bar--${variant ?? 'primary'}`"
       :style="{ width: `${Math.min((value / (max ?? 100)) * 100, 100)}%` }"
     />
-    <span v-if="showLabel" class="progress__label">{{ Math.round((value / (max ?? 100)) * 100) }}%</span>
+    <span v-if="showLabel" class="progress__label"
+      >{{ Math.round((value / (max ?? 100)) * 100) }}%</span
+    >
   </div>
 </template>
 
@@ -32,10 +34,18 @@ defineProps<{
     border-radius: 9999px;
     transition: width 0.3s ease;
 
-    &--primary { background: #1a73e8; }
-    &--success { background: #10b981; }
-    &--warning { background: #f59e0b; }
-    &--danger { background: #ef4444; }
+    &--primary {
+      background: #1a73e8;
+    }
+    &--success {
+      background: #10b981;
+    }
+    &--warning {
+      background: #f59e0b;
+    }
+    &--danger {
+      background: #ef4444;
+    }
   }
 
   &__label {

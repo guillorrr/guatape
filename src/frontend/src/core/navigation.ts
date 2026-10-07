@@ -21,15 +21,30 @@ export const menu: MenuItem[] = [
     label: 'Configuración',
     icon: 'pi pi-cog',
     children: [
-      { label: 'Usuarios', icon: 'pi pi-users', to: '/app/settings/users', permission: 'users.view' },
+      {
+        label: 'Usuarios',
+        icon: 'pi pi-users',
+        to: '/app/settings/users',
+        permission: 'users.view',
+      },
     ],
   },
   {
     label: 'Sistema',
     icon: 'pi pi-server',
     children: [
-      { label: 'Actividad', icon: 'pi pi-history', to: '/app/system/activity', permission: 'system.view' },
-      { label: 'Comandos', icon: 'pi pi-list', to: '/app/system/commands', permission: 'system.view' },
+      {
+        label: 'Actividad',
+        icon: 'pi pi-history',
+        to: '/app/system/activity',
+        permission: 'system.view',
+      },
+      {
+        label: 'Comandos',
+        icon: 'pi pi-list',
+        to: '/app/system/commands',
+        permission: 'system.view',
+      },
     ],
   },
 ];

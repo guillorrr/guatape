@@ -78,97 +78,94 @@ onMounted(load);
 </script>
 
 <template>
-    <div class="page-header">
-      <h1>Comandos disponibles</h1>
-      <span v-if="!loading" class="count">{{ commands.length }} comandos</span>
-    </div>
+  <div class="page-header">
+    <h1>Comandos disponibles</h1>
+    <span v-if="!loading" class="count">{{ commands.length }} comandos</span>
+  </div>
 
-    <p class="intro">
-      Todo lo que la app sabe hacer por línea de comandos. Se arma leyendo el código, así que
-      siempre está al día: si alguien agrega un comando, aparece acá solo.
-    </p>
+  <p class="intro">
+    Todo lo que la app sabe hacer por línea de comandos. Se arma leyendo el código, así que siempre
+    está al día: si alguien agrega un comando, aparece acá solo.
+  </p>
 
-    <div class="controls">
-      <InputText
-        v-model="query"
-        placeholder="Buscar por nombre, descripción u opción…"
-        class="search"
-      />
-      <label v-if="historicCount" class="toggle">
-        <input v-model="showHistoric" type="checkbox" />
-        Mostrar los {{ historicCount }} históricos (ya corrieron, no queda nada que hacer)
-      </label>
-    </div>
+  <div class="controls">
+    <InputText
+      v-model="query"
+      placeholder="Buscar por nombre, descripción u opción…"
+      class="search"
+    />
+    <label v-if="historicCount" class="toggle">
+      <input v-model="showHistoric" type="checkbox" />
+      Mostrar los {{ historicCount }} históricos (ya corrieron, no queda nada que hacer)
+    </label>
+  </div>
 
-    <div v-if="loading" class="muted">Cargando…</div>
+  <div v-if="loading" class="muted">Cargando…</div>
 
-    <div v-else-if="!filtered.length" class="muted">Ningún comando coincide con “{{ query }}”.</div>
+  <div v-else-if="!filtered.length" class="muted">Ningún comando coincide con “{{ query }}”.</div>
 
-    <div v-for="[domain, items] in grouped" v-else :key="domain" class="domain">
-      <h2>
-        {{ domain }} <span class="domain-count">{{ items.length }}</span>
-      </h2>
+  <div v-for="[domain, items] in grouped" v-else :key="domain" class="domain">
+    <h2>
+      {{ domain }} <span class="domain-count">{{ items.length }}</span>
+    </h2>
 
-      <div v-for="command in items" :key="command.name" class="command">
-        <button class="command-head" type="button" @click="toggle(command.name)">
-          <div class="command-title">
-            <code>{{ command.name }}</code>
-            <span
-              v-if="command.lifecycle !== 'recurring'"
-              class="badge"
-              :class="command.lifecycle"
-              >{{ command.lifecycle_label }}</span
-            >
-            <span
-              v-if="command.schedule"
-              class="badge"
-              :title="`Agendado (cron): ${command.schedule.expression}`"
-            >
-              {{ command.schedule.expression }}
-            </span>
-          </div>
-          <p class="command-desc">{{ command.description }}</p>
-        </button>
-
-        <div v-if="openName === command.name" class="command-body">
-          <p v-if="command.note" class="note">{{ command.note }}</p>
-          <div v-if="command.arguments.length" class="params">
-            <h4>Argumentos</h4>
-            <div v-for="arg in command.arguments" :key="arg.name" class="param">
-              <code>{{ arg.name }}</code>
-              <span v-if="arg.required" class="req">obligatorio</span>
-              <span class="param-desc">{{ arg.description || '—' }}</span>
-            </div>
-          </div>
-
-          <div v-if="command.options.length" class="params">
-            <h4>Opciones</h4>
-            <div v-for="opt in command.options" :key="opt.name" class="param">
-              <code>--{{ opt.name }}{{ opt.accepts_value ? '=' : '' }}</code>
-              <span v-if="opt.default !== null && opt.default !== ''" class="def">
-                por defecto {{ opt.default }}
-              </span>
-              <span class="param-desc">{{ opt.description || '—' }}</span>
-            </div>
-          </div>
-
-          <p v-if="!command.arguments.length && !command.options.length" class="muted small">
-            No lleva argumentos ni opciones.
-          </p>
-
-          <div class="run">
-            <code class="line">{{ fullLine(command) }}</code>
-            <Button label="Copiar" icon="pi pi-copy" size="small" text @click="copy(command)" />
-          </div>
-
-          <p v-if="command.schedule?.last_run" class="small muted">
-            Última corrida automática:
-            {{ formatDateTime(command.schedule.last_run.finished_at) }}
-            — {{ command.schedule.last_run.status }}
-          </p>
+    <div v-for="command in items" :key="command.name" class="command">
+      <button class="command-head" type="button" @click="toggle(command.name)">
+        <div class="command-title">
+          <code>{{ command.name }}</code>
+          <span v-if="command.lifecycle !== 'recurring'" class="badge" :class="command.lifecycle">{{
+            command.lifecycle_label
+          }}</span>
+          <span
+            v-if="command.schedule"
+            class="badge"
+            :title="`Agendado (cron): ${command.schedule.expression}`"
+          >
+            {{ command.schedule.expression }}
+          </span>
         </div>
+        <p class="command-desc">{{ command.description }}</p>
+      </button>
+
+      <div v-if="openName === command.name" class="command-body">
+        <p v-if="command.note" class="note">{{ command.note }}</p>
+        <div v-if="command.arguments.length" class="params">
+          <h4>Argumentos</h4>
+          <div v-for="arg in command.arguments" :key="arg.name" class="param">
+            <code>{{ arg.name }}</code>
+            <span v-if="arg.required" class="req">obligatorio</span>
+            <span class="param-desc">{{ arg.description || '—' }}</span>
+          </div>
+        </div>
+
+        <div v-if="command.options.length" class="params">
+          <h4>Opciones</h4>
+          <div v-for="opt in command.options" :key="opt.name" class="param">
+            <code>--{{ opt.name }}{{ opt.accepts_value ? '=' : '' }}</code>
+            <span v-if="opt.default !== null && opt.default !== ''" class="def">
+              por defecto {{ opt.default }}
+            </span>
+            <span class="param-desc">{{ opt.description || '—' }}</span>
+          </div>
+        </div>
+
+        <p v-if="!command.arguments.length && !command.options.length" class="muted small">
+          No lleva argumentos ni opciones.
+        </p>
+
+        <div class="run">
+          <code class="line">{{ fullLine(command) }}</code>
+          <Button label="Copiar" icon="pi pi-copy" size="small" text @click="copy(command)" />
+        </div>
+
+        <p v-if="command.schedule?.last_run" class="small muted">
+          Última corrida automática:
+          {{ formatDateTime(command.schedule.last_run.finished_at) }}
+          — {{ command.schedule.last_run.status }}
+        </p>
       </div>
     </div>
+  </div>
 </template>
 
 <style scoped>

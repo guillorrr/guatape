@@ -27,9 +27,24 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/templates/AuthLayout.vue'),
     meta: { guest: true },
     children: [
-      { path: 'login', name: 'login', component: () => import('@/pages/auth/LoginPage.vue'), meta: { title: 'Iniciar sesión' } },
-      { path: 'forgot-password', name: 'forgot-password', component: () => import('@/pages/auth/ForgotPasswordPage.vue'), meta: { title: 'Recuperar contraseña' } },
-      { path: 'reset-password', name: 'reset-password', component: () => import('@/pages/auth/ResetPasswordPage.vue'), meta: { title: 'Nueva contraseña' } },
+      {
+        path: 'login',
+        name: 'login',
+        component: () => import('@/pages/auth/LoginPage.vue'),
+        meta: { title: 'Iniciar sesión' },
+      },
+      {
+        path: 'forgot-password',
+        name: 'forgot-password',
+        component: () => import('@/pages/auth/ForgotPasswordPage.vue'),
+        meta: { title: 'Recuperar contraseña' },
+      },
+      {
+        path: 'reset-password',
+        name: 'reset-password',
+        component: () => import('@/pages/auth/ResetPasswordPage.vue'),
+        meta: { title: 'Nueva contraseña' },
+      },
     ],
   },
   {
@@ -37,8 +52,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/templates/DashboardLayout.vue'),
     meta: { requiresAuth: true },
     children: [
-      { path: '', name: 'dashboard', component: () => import('@/pages/DashboardPage.vue'), meta: { title: 'Inicio' } },
-      { path: 'account', name: 'account', component: () => import('@/pages/AccountPage.vue'), meta: { title: 'Mi cuenta' } },
+      {
+        path: '',
+        name: 'dashboard',
+        component: () => import('@/pages/DashboardPage.vue'),
+        meta: { title: 'Inicio' },
+      },
+      {
+        path: 'account',
+        name: 'account',
+        component: () => import('@/pages/AccountPage.vue'),
+        meta: { title: 'Mi cuenta' },
+      },
       {
         path: 'settings/users',
         name: 'settings-users',
@@ -49,13 +74,28 @@ const routes: RouteRecordRaw[] = [
         path: 'system',
         meta: { permission: 'system.view' },
         children: [
-          { path: 'activity', name: 'system-activity', component: () => import('@/pages/system/ActivityPage.vue'), meta: { title: 'Actividad' } },
-          { path: 'commands', name: 'system-commands', component: () => import('@/pages/system/CommandCatalogPage.vue'), meta: { title: 'Comandos' } },
+          {
+            path: 'activity',
+            name: 'system-activity',
+            component: () => import('@/pages/system/ActivityPage.vue'),
+            meta: { title: 'Actividad' },
+          },
+          {
+            path: 'commands',
+            name: 'system-commands',
+            component: () => import('@/pages/system/CommandCatalogPage.vue'),
+            meta: { title: 'Comandos' },
+          },
         ],
       },
     ],
   },
-  { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/pages/NotFoundPage.vue'), meta: { title: 'No encontrado' } },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('@/pages/NotFoundPage.vue'),
+    meta: { title: 'No encontrado' },
+  },
 ];
 
 const router = createRouter({

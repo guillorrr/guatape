@@ -60,13 +60,27 @@ export async function ensureCsrfCookie(): Promise<void> {
   await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
 }
 
-function toApiError(error: AxiosError<{ message?: string; errors?: Record<string, string[]>; code?: string; details?: unknown }>): ApiError {
+function toApiError(
+  error: AxiosError<{
+    message?: string;
+    errors?: Record<string, string[]>;
+    code?: string;
+    details?: unknown;
+  }>,
+): ApiError {
   if (!error.response) {
     return new ApiError('No se pudo conectar con el servidor.', 0);
   }
   const { status, data } = error.response;
-  const fallback = status >= 500 ? 'Error del servidor. Probá de nuevo en unos minutos.' : 'La solicitud falló.';
-  return new ApiError(data?.message || fallback, status, data?.errors ?? {}, data?.code ?? null, data?.details ?? null);
+  const fallback =
+    status >= 500 ? 'Error del servidor. Probá de nuevo en unos minutos.' : 'La solicitud falló.';
+  return new ApiError(
+    data?.message || fallback,
+    status,
+    data?.errors ?? {},
+    data?.code ?? null,
+    data?.details ?? null,
+  );
 }
 
 apiClient.interceptors.response.use(
@@ -83,7 +97,12 @@ apiClient.interceptors.response.use(
     }
 
     const apiError = toApiError(error as AxiosError<never>);
-    if (apiError.status === 401 || apiError.status === 403 || apiError.status === 0 || apiError.status >= 500) {
+    if (
+      apiError.status === 401 ||
+      apiError.status === 403 ||
+      apiError.status === 0 ||
+      apiError.status >= 500
+    ) {
       listeners.forEach((listener) => listener(apiError));
     }
     return Promise.reject(apiError);

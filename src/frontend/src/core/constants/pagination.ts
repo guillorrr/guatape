@@ -6,6 +6,6 @@
  * Page size is persisted per-list by useDataTable/useClientDataTable (localStorage);
  * raw tables that opt in should persist it the same way.
  */
-export const ROWS_PER_PAGE_OPTIONS: number[] = [20, 50, 100]
+export const ROWS_PER_PAGE_OPTIONS: number[] = [20, 50, 100];
 
-export const DEFAULT_ROWS_PER_PAGE = 20
+export const DEFAULT_ROWS_PER_PAGE = 20;

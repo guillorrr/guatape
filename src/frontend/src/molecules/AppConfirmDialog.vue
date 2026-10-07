@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import AppModal from './AppModal.vue'
-import AppButton from '@/atoms/AppButton.vue'
+import AppModal from './AppModal.vue';
+import AppButton from '@/atoms/AppButton.vue';
 
 defineProps<{
-  show: boolean
-  title: string
-  message: string
-  confirmText?: string
-  cancelText?: string
-  variant?: 'danger' | 'primary'
-}>()
+  show: boolean;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  variant?: 'danger' | 'primary';
+}>();
 
 const emit = defineEmits<{
-  confirm: []
-  cancel: []
-}>()
+  confirm: [];
+  cancel: [];
+}>();
 </script>
 
 <template>
@@ -22,7 +22,9 @@ const emit = defineEmits<{
     <p>{{ message }}</p>
     <template #footer>
       <AppButton variant="ghost" @click="emit('cancel')">{{ cancelText ?? 'Cancelar' }}</AppButton>
-      <AppButton :variant="variant ?? 'danger'" @click="emit('confirm')">{{ confirmText ?? 'Confirmar' }}</AppButton>
+      <AppButton :variant="variant ?? 'danger'" @click="emit('confirm')">{{
+        confirmText ?? 'Confirmar'
+      }}</AppButton>
     </template>
   </AppModal>
 </template>

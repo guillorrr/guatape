@@ -1,13 +1,17 @@
 <script setup lang="ts">
-const mode = import.meta.env.MODE
-const isDev = mode === 'development'
+const mode = import.meta.env.MODE;
+const isDev = mode === 'development';
 </script>
 
 <template>
   <span
     class="env-badge"
     :class="isDev ? 'env-badge--dev' : 'env-badge--prod'"
-    :title="isDev ? 'Entorno de desarrollo — sandbox, sin consecuencias reales' : 'Entorno productivo — cuidado con cambios destructivos'"
+    :title="
+      isDev
+        ? 'Entorno de desarrollo — sandbox, sin consecuencias reales'
+        : 'Entorno productivo — cuidado con cambios destructivos'
+    "
   >
     {{ isDev ? 'DEV' : 'PROD' }}
   </span>

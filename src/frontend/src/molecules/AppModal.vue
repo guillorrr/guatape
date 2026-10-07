@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import Dialog from 'primevue/dialog'
-import { computed } from 'vue'
+import Dialog from 'primevue/dialog';
+import { computed } from 'vue';
 
 const props = defineProps<{
-  title: string
-  show: boolean
-  size?: 'sm' | 'md' | 'lg'
-}>()
+  title: string;
+  show: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}>();
 
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 
 const width = computed(() => {
-  const map: Record<string, string> = { sm: '400px', md: '600px', lg: '900px' }
-  return map[props.size ?? 'md']
-})
+  const map: Record<string, string> = { sm: '400px', md: '600px', lg: '900px' };
+  return map[props.size ?? 'md'];
+});
 
 const visible = computed({
   get: () => props.show,
-  set: (val) => { if (!val) emit('close') },
-})
+  set: (val) => {
+    if (!val) emit('close');
+  },
+});
 </script>
 
 <template>

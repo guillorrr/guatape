@@ -29,7 +29,10 @@ export const userService = {
     return api.put<ItemResponse<User>>(`/users/${id}/roles`, { roles });
   },
   setPassword(id: number, password: string, password_confirmation: string) {
-    return api.put<{ message: string }>(`/users/${id}/password`, { password, password_confirmation });
+    return api.put<{ message: string }>(`/users/${id}/password`, {
+      password,
+      password_confirmation,
+    });
   },
   roles() {
     return api.get<{ data: Role[] }>('/roles');
