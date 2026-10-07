@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\RoleController;
@@ -40,6 +41,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/users/{user}/roles', [UserController::class, 'syncRoles']);
         Route::put('/users/{user}/password', [UserController::class, 'setPassword']);
     });
+
+    // --- Attachments (whitelisted parents + permissions in config/attachments.php) ---
+    Route::get('/attachments/{type}/{id}', [AttachmentController::class, 'index'])->whereNumber('id');
+    Route::post('/attachments/{type}/{id}', [AttachmentController::class, 'store'])->whereNumber('id');
+    Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'download']);
+    Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy']);
 
     // --- System: background activity, schedule, commands ---
     Route::middleware('permission:system.view')->prefix('system')->group(function () {
