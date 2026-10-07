@@ -82,6 +82,8 @@ jobs:
           cache: npm
           cache-dependency-path: src/frontend/package-lock.json
 
-      - run: npm ci
+      # --prefix pins the install to src/frontend: without it npm finds the root
+      # package.json (workspaces) and demands a root package-lock.json.
+      - run: npm ci --prefix .
       - run: npm run type-check
       - run: npm run build
