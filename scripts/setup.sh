@@ -30,58 +30,14 @@ else
   echo "  ✓ SSL certificates already exist"
 fi
 
-# --- 3. Laravel Installation ---
+# --- 3. Laravel dependencies ---
 echo ""
 echo "[3/6] Setting up Laravel..."
-if [ ! -f "$PROJECT_DIR/src/api/composer.json" ]; then
-  echo "  Installing Laravel 12..."
-  docker compose run --rm --no-deps -u root api bash -c \
-    "composer create-project laravel/laravel /tmp/laravel && \
-     cp -a /tmp/laravel/. /var/www/api/ && \
-     rm -rf /tmp/laravel && \
-     chown -R www:www /var/www/api"
-  echo "  ✓ Laravel installed"
-else
-  echo "  ✓ Laravel already installed"
-  echo "  Installing composer dependencies..."
-  docker compose run --rm --no-deps api composer install
+docker compose run --rm --no-deps api composer install
+if [ ! -f "$PROJECT_DIR/src/api/.env" ]; then
+  cp "$PROJECT_DIR/src/api/.env.example" "$PROJECT_DIR/src/api/.env"
+  echo "  ✓ src/api/.env created from src/api/.env.example"
 fi
-
-# Configure Laravel .env
-echo "  Configuring Laravel environment..."
-docker compose run --rm --no-deps api bash -c "
-  sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env
-  sed -i 's/DB_HOST=.*/DB_HOST=db/' .env
-  sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
-  sed -i 's/DB_DATABASE=.*/DB_DATABASE=${DB_DATABASE:-guatape}/' .env
-  sed -i 's/DB_USERNAME=.*/DB_USERNAME=${DB_USERNAME:-guatape}/' .env
-  sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=${DB_PASSWORD:-secret}/' .env
-  sed -i 's/REDIS_HOST=.*/REDIS_HOST=redis/' .env
-  sed -i 's/MAIL_MAILER=.*/MAIL_MAILER=smtp/' .env
-  sed -i 's/MAIL_HOST=.*/MAIL_HOST=mailhog/' .env
-  sed -i 's/MAIL_PORT=.*/MAIL_PORT=1025/' .env
-  sed -i 's/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=redis/' .env
-"
-
-# Install Sanctum
-echo "  Installing Laravel Sanctum..."
-docker compose run --rm --no-deps api composer require laravel/sanctum
-
-# Create custom directories
-echo "  Creating project structure..."
-docker compose run --rm --no-deps api bash -c "
-  mkdir -p app/Services
-  mkdir -p app/Integrations/MercadoLibre
-  mkdir -p app/Integrations/Afip
-  mkdir -p app/DTOs
-  mkdir -p app/Enums
-  mkdir -p app/Events
-  mkdir -p app/Listeners
-  mkdir -p app/Jobs
-  mkdir -p app/Observers
-  mkdir -p app/Policies
-  mkdir -p app/Actions
-"
 echo "  ✓ Laravel configured"
 
 # --- 4. Frontend Setup ---
@@ -97,11 +53,11 @@ fi
 # --- 5. Database ---
 echo ""
 echo "[5/6] Setting up database..."
-docker compose up -d db redis
-echo "  Waiting for MySQL to be ready..."
-sleep 10
-docker compose exec api php artisan migrate --force
-docker compose exec api php artisan key:generate
+echo "  Waiting for MySQL to be healthy..."
+docker compose up -d --wait db redis
+docker compose up -d api
+docker compose exec api sh -c "grep -q '^APP_KEY=base64' .env || php artisan key:generate"
+docker compose exec api php artisan migrate --force --seed
 echo "  ✓ Database migrated"
 
 # --- 6. Storage link ---

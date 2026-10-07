@@ -2,7 +2,7 @@
   "name": "guatape",
   "version": "0.1.0",
   "private": true,
-  "description": "Guatapé — Laravel 12 + Vue 3 scaffold",
+  "description": "Guatapé — Laravel 13 + Vue 3 scaffold",
   "workspaces": [
     "src/frontend"
   ],
