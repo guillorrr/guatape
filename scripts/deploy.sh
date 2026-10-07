@@ -53,8 +53,10 @@ main() {
   mkdir -p backups
   file="backups/pre-deploy-$(date -u +%Y%m%d-%H%M%S).sql.gz"
   "${DC[@]}" exec -T db sh -c 'mysqldump --single-transaction --quick -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' | gzip > "$file"
-  if [ "$(stat -c %s "$file")" -lt 512 ]; then
-    echo "  ✗ backup looks empty, refusing to migrate"; rm -f "$file"; exit 1
+  # mysqldump writes this trailer only when it finished; size says nothing
+  # (an empty database dumps to a few hundred bytes).
+  if ! gzip -dc "$file" | tail -n 1 | grep -q -- '-- Dump completed'; then
+    echo "  ✗ backup is incomplete, refusing to migrate"; rm -f "$file"; exit 1
   fi
   ls -t backups/pre-deploy-*.sql.gz | tail -n +"$((KEEP_BACKUPS + 1))" | xargs -r rm
   echo "  ✓ $file"
