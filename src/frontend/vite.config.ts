@@ -13,6 +13,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    // Vite only answers localhost and IPs unless told otherwise. The dev
+    // stack serves the SPA at DOMAIN and, with tenancy, at <slug>.DOMAIN.
+    allowedHosts: process.env.DOMAIN ? [process.env.DOMAIN, `.${process.env.DOMAIN}`] : [],
     proxy: {
       '/api': {
         target: 'http://nginx',
