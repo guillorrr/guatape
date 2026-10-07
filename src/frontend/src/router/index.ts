@@ -45,6 +45,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/settings/UserListPage.vue'),
         meta: { title: 'Usuarios', permission: 'users.view' },
       },
+      {
+        path: 'system',
+        meta: { permission: 'system.view' },
+        children: [
+          { path: 'activity', name: 'system-activity', component: () => import('@/pages/system/ActivityPage.vue'), meta: { title: 'Actividad' } },
+          { path: 'commands', name: 'system-commands', component: () => import('@/pages/system/CommandCatalogPage.vue'), meta: { title: 'Comandos' } },
+        ],
+      },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/pages/NotFoundPage.vue'), meta: { title: 'No encontrado' } },

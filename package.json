@@ -7,13 +7,14 @@
     "src/frontend"
   ],
   "scripts": {
-    "start": "docker compose up -d api frontend nginx db redis",
+    "start": "docker compose up -d api queue-worker scheduler frontend nginx db redis",
     "start:all": "docker compose --profile tools --profile storybook up -d",
     "stop": "docker compose --profile tools --profile storybook down",
-    "dev": "docker compose up api frontend nginx db redis",
+    "dev": "docker compose up api queue-worker scheduler frontend nginx db redis",
     "logs": "docker compose logs -f",
     "logs:api": "docker compose logs -f api",
     "logs:frontend": "docker compose logs -f frontend",
+    "logs:worker": "docker compose logs -f queue-worker scheduler",
 
     "setup": "bash scripts/setup.sh",
     "setup:env": "cp -n .env.example .env || true",
@@ -40,8 +41,7 @@
     "test:api": "docker compose exec api php artisan test",
     "test:frontend": "docker compose exec frontend npm run test",
 
-    "queue:work": "docker compose exec api php artisan queue:work",
-    "queue:listen": "docker compose exec api php artisan queue:listen",
+    "queue:restart": "docker compose exec api php artisan queue:restart",
 
     "backup:db": "bash scripts/backup-db.sh"
   },

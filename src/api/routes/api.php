@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\RoleController;
@@ -38,5 +39,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{user}', [UserController::class, 'destroy']);
         Route::put('/users/{user}/roles', [UserController::class, 'syncRoles']);
         Route::put('/users/{user}/password', [UserController::class, 'setPassword']);
+    });
+
+    // --- System: background activity, schedule, commands ---
+    Route::middleware('permission:system.view')->prefix('system')->group(function () {
+        Route::get('/activity', [ActivityController::class, 'index']);
+        Route::get('/activity/stats', [ActivityController::class, 'stats']);
+        Route::get('/activity/{run}', [ActivityController::class, 'show'])->whereNumber('run');
+        Route::get('/schedule', [ActivityController::class, 'schedule']);
+        Route::get('/commands', [ActivityController::class, 'commands']);
     });
 });
