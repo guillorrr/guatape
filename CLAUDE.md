@@ -57,6 +57,7 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 | Login, sessions, CSRF, roles and permissions | `docs/auth.md` |
 | API shape, errors, `ListQuery`, background jobs, attachments, settings, seeders, tests | `docs/backend-conventions.md` |
 | CRUD list pages (`AppCrudTable` + `useDataTable` + `ListQuery`) | `docs/datatable-pattern.md` |
+| Forms: `useForm`, `AppField` and the form kit (remote selects, repeater, dates, rich text, files) | `docs/forms.md` |
 | CI, production stack, deploy script, rollback | `docs/deployment.md` |
 
 ## Architecture Conventions
@@ -75,13 +76,15 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 - **Atomic Design**: atoms → molecules → organisms → templates → pages.
 - **Composition API only**: `<script setup lang="ts">`.
 - **API calls**: through `core/services/*.service.ts`; failures are `ApiError` (`status`, `message`, `errors`, `fieldError()`).
-- **Forms**: `useForm` (`form.submit(() => …)`, `form.error('field')`).
+- **Forms**: `useForm` + `AppField` + the form kit (`AppRemoteSelect`, `AppRepeater`, `AppDatePicker`, `AppRichText`, `AppFileInput`, `AppAttachments`) — see `docs/forms.md`; living reference at `/app/dev/form-kit` in development.
 - **Lists**: `AppCrudTable` + `useDataTable` (see `docs/datatable-pattern.md`; `UserListPage.vue` is the reference).
 - **Permissions**: `meta.permission` on routes, `permission` in `core/navigation.ts`, `usePermissions().can()` in templates. UX only; the API enforces them.
 - **Layouts**: `AppLayout` (public), `AuthLayout` (login/reset), `DashboardLayout` (`/app/**`) are parent routes; pages don't wrap themselves.
 - **Destructive confirms**: `useConfirm()` with `defaultFocus: 'reject'`.
 - **Mobile**: every page must fit 390px wide; wide tables scroll inside their box.
 - **Storybook**: every atom and molecule should have a `.stories.ts` file.
+- **Language**: UI in Spanish; the API answers in `APP_LOCALE` (`es`). New `__('…')` strings need their entry in `lang/es.json` (a test enforces it).
+- **Tests**: Vitest specs next to the code in `__tests__/` (`*.spec.ts`); mount components with `mountWithPrime` (`src/test/mount.ts`).
 
 ## Naming Conventions
 
@@ -116,7 +119,7 @@ npm run queue:restart       # After changing job code
 # Frontend
 npm run storybook
 npm run test:frontend
-# src/frontend: npm run type-check && npm run build   (what CI runs)
+# src/frontend: npm run lint && npm run format:check && npm run type-check && npm run test && npm run build   (what CI runs)
 
 # Infrastructure
 npm run setup               # Full first-time setup (idempotent)
@@ -169,7 +172,7 @@ All host ports are configurable in the root `.env`.
 
 ## Code Style
 - PHP: Laravel Pint (`vendor/bin/pint`, CI runs `--test`)
-- TypeScript/Vue: ESLint + Prettier (see `.prettierrc`); `npm run type-check` must pass
+- TypeScript/Vue: ESLint 9 (`src/frontend/eslint.config.js`) + Prettier (`.prettierrc`); lint, format check, type-check and Vitest run in CI
 - Commits: Conventional Commits (`feat:`, `fix:`, `docs:`…), Husky + commitlint
 
 ## Git discipline (parallel agents)
