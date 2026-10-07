@@ -47,9 +47,11 @@ RUN echo "upload_max_filesize=64M" >> "$PHP_INI_DIR/php.ini" \
 # Working directory
 WORKDIR /var/www/api
 
-# User permissions
+# User permissions. vendor/ is created here so the `api_vendor` named volume
+# inherits www ownership on first mount (Docker copies the image's ownership
+# into an empty volume); otherwise it is root-owned and composer can't write.
 RUN groupadd -g 1000 www && useradd -u 1000 -ms /bin/bash -g www www
-RUN chown -R www:www /var/www
+RUN mkdir -p /var/www/api/vendor && chown -R www:www /var/www
 USER www
 
 EXPOSE 9000
