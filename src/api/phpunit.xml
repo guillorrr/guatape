@@ -31,6 +31,7 @@
         <env name="SESSION_DRIVER" value="array" force="true"/>
         <env name="SANCTUM_STATEFUL_DOMAINS" value="localhost" force="true"/>
         <env name="REGISTRATION_ENABLED" value="false" force="true"/>
+        <env name="TENANCY_ENABLED" value="false" force="true"/>
         <!-- The api container exports APP_ENV, DB_* … as OS variables, and Laravel
              reads $_SERVER before $_ENV: forced <env> alone would be ignored and
              tests would run as "local" (CSRF on, development database). -->
@@ -44,5 +45,6 @@
         <server name="SESSION_DRIVER" value="array" force="true"/>
         <server name="SANCTUM_STATEFUL_DOMAINS" value="localhost" force="true"/>
         <server name="REGISTRATION_ENABLED" value="false" force="true"/>
+        <server name="TENANCY_ENABLED" value="false" force="true"/>
     </php>
 </phpunit>

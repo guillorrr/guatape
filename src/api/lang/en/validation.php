@@ -197,6 +197,11 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'slug' => 'subdomain',
+        'admin.name' => "admin's name",
+        'admin.email' => "admin's email",
+        'admin.password' => "admin's password",
+    ],
 
 ];
