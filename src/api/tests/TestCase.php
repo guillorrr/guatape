@@ -3,8 +3,32 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\DB;
 
 abstract class TestCase extends BaseTestCase
 {
-    //
+    /**
+     * Pins the suite to the `mysql_testing` connection and makes requests look
+     * like they come from the SPA.
+     *
+     * The api container exports DB_* as OS env vars, which win over
+     * phpunit.xml's <env>; re-pointing the default connection here guarantees
+     * tests never run against the development database.
+     *
+     * The Referer header is what makes Sanctum treat the request as stateful
+     * (session + cookies), exactly like the SPA. Without it, login and logout
+     * would have no session to work with.
+     */
+    protected function setUp(): void
+    {
+        $_ENV['DB_CONNECTION'] = $_SERVER['DB_CONNECTION'] = 'mysql_testing';
+        putenv('DB_CONNECTION=mysql_testing');
+
+        parent::setUp();
+
+        config(['database.default' => 'mysql_testing']);
+        DB::setDefaultConnection('mysql_testing');
+
+        $this->withHeader('Referer', 'http://localhost');
+    }
 }
