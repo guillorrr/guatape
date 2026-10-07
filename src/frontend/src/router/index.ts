@@ -2,6 +2,7 @@ import { watch } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/core/stores/auth.store';
+import { useTenancyStore } from '@/core/stores/tenancy.store';
 import { i18n } from '@/i18n';
 
 declare module 'vue-router' {
@@ -12,6 +13,8 @@ declare module 'vue-router' {
     guest?: boolean;
     /** Required permission(s); the user needs ANY of them. Inherited by children. */
     permission?: string | string[];
+    /** Platform administration: super admins on the central domain (tenancy on). */
+    superAdmin?: boolean;
     /** Browser tab title, as an i18n key. */
     title?: string;
   }
@@ -84,6 +87,12 @@ const routes: RouteRecordRaw[] = [
           ]
         : []),
       {
+        path: 'platform/tenants',
+        name: 'platform-tenants',
+        component: () => import('@/pages/platform/TenantListPage.vue'),
+        meta: { title: 'nav.tenants', superAdmin: true },
+      },
+      {
         path: 'system',
         meta: { permission: 'system.view' },
         children: [
@@ -104,6 +113,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/unavailable',
+    name: 'tenant-unavailable',
+    component: () => import('@/pages/TenantUnavailablePage.vue'),
+    meta: { title: 'tenancy.unavailableTitle' },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/NotFoundPage.vue'),
@@ -117,6 +132,13 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  // Organization first (the API resolves it from the host), then the user.
+  const tenancy = useTenancyStore();
+  await tenancy.ensureLoaded();
+  if (tenancy.unavailable) {
+    return to.name === 'tenant-unavailable' ? true : { name: 'tenant-unavailable' };
+  }
+
   const auth = useAuthStore();
   await auth.ensureLoaded();
 
@@ -131,9 +153,10 @@ router.beforeEach(async (to) => {
   const denied = to.matched.some((r) => {
     if (!r.meta.permission) return false;
     const required = Array.isArray(r.meta.permission) ? r.meta.permission : [r.meta.permission];
-    return !required.some((p) => auth.permissions.includes(p));
+    return !auth.user?.is_super_admin && !required.some((p) => auth.permissions.includes(p));
   });
-  if (denied) {
+  const superAdminOnly = to.matched.some((r) => r.meta.superAdmin);
+  if (denied || (superAdminOnly && !(auth.user?.is_super_admin && tenancy.isCentral))) {
     return { name: 'dashboard' };
   }
 

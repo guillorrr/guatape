@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Tenancy\BelongsToTenant;
+use App\Tenancy\Tenancy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -12,10 +14,13 @@ use Illuminate\Support\Facades\Cache;
  *   AppSetting::set('orders.auto_close_days', 30);
  *   AppSetting::get('orders.auto_close_days', 15);   // int 30
  *
- * Reads are cached forever and invalidated on write.
+ * Reads are cached forever and invalidated on write. With tenancy on, each
+ * tenant has its own values (and the central context its own).
  */
 class AppSetting extends Model
 {
+    use BelongsToTenant;
+
     private const CACHE_PREFIX = 'app_setting:';
 
     protected $fillable = ['key', 'value'];
@@ -25,10 +30,16 @@ class AppSetting extends Model
         return ['value' => 'json'];
     }
 
+    /** Per tenant: the same key holds a different value in each tenant. */
+    private static function cacheKey(string $key): string
+    {
+        return self::CACHE_PREFIX.(app(Tenancy::class)->id() ?? 'central').':'.$key;
+    }
+
     public static function get(string $key, mixed $default = null): mixed
     {
         // Stored as [value] so a cached null is distinguishable from a miss.
-        $hit = Cache::rememberForever(self::CACHE_PREFIX.$key, function () use ($key) {
+        $hit = Cache::rememberForever(self::cacheKey($key), function () use ($key) {
             $row = static::where('key', $key)->first();
 
             return $row ? [$row->value] : [];
@@ -40,12 +51,12 @@ class AppSetting extends Model
     public static function set(string $key, mixed $value): void
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
-        Cache::forget(self::CACHE_PREFIX.$key);
+        Cache::forget(self::cacheKey($key));
     }
 
     public static function forget(string $key): void
     {
         static::where('key', $key)->delete();
-        Cache::forget(self::CACHE_PREFIX.$key);
+        Cache::forget(self::cacheKey($key));
     }
 }

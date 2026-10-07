@@ -51,7 +51,9 @@
     "login": "Iniciar sesión",
     "forgotPassword": "Recuperar contraseña",
     "resetPassword": "Nueva contraseña",
-    "notFound": "No encontrado"
+    "notFound": "No encontrado",
+    "platform": "Plataforma",
+    "tenants": "Organizaciones"
   },
   "errors": {
     "network": "No se pudo conectar con el servidor.",
@@ -268,5 +270,42 @@
     "minutesAgo": "hace {n} m",
     "hoursAgo": "hace {n} h",
     "daysAgo": "hace {n} d"
+  },
+  "tenancy": {
+    "unavailableTitle": "No disponible",
+    "notFoundTitle": "No encontramos esta organización",
+    "notFoundMessage": "Revisá la dirección: no hay ninguna organización registrada con este nombre.",
+    "suspendedTitle": "Organización suspendida",
+    "suspendedMessage": "El acceso a esta organización está suspendido. Contactá a quien administra la cuenta."
+  },
+  "tenants": {
+    "new": "Nueva organización",
+    "editTitle": "Editar organización",
+    "columns": {
+      "name": "Nombre",
+      "slug": "Subdominio",
+      "url": "Dirección",
+      "users": "Usuarios",
+      "status": "Estado",
+      "createdAt": "Alta"
+    },
+    "status": {
+      "active": "Activa",
+      "suspended": "Suspendida"
+    },
+    "searchPlaceholder": "Buscar por nombre, subdominio o dominio",
+    "empty": "No hay organizaciones",
+    "domain": "Dominio propio",
+    "slugHint": "Minúsculas, números y guiones. Es su dirección: subdominio.dominio-central.",
+    "domainHint": "Opcional, por ejemplo app.empresa.com (tiene que apuntar a este servidor).",
+    "firstAdmin": "Primer admin",
+    "created": "Organización creada",
+    "updated": "Organización actualizada",
+    "suspend": "Suspender",
+    "activate": "Reactivar",
+    "suspendTitle": "Suspender organización",
+    "suspendMessage": "¿Suspender {name}? Sus usuarios no van a poder entrar hasta que la reactives.",
+    "activateTitle": "Reactivar organización",
+    "activateMessage": "¿Reactivar {name}? Sus usuarios vuelven a poder entrar."
   }
 }

@@ -30,6 +30,10 @@ export interface User {
   email: string;
   /** Saved UI/mail language; null follows the browser. */
   locale: string | null;
+  /** Organization (tenancy on); null for super admins or with tenancy off. */
+  tenant_id: number | null;
+  /** Platform super admin: every permission, central domain only. */
+  is_super_admin: boolean;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;

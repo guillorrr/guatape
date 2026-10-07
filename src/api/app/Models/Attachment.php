@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class Attachment extends Model
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'disk',
         'path',
