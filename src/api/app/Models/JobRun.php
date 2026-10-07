@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class JobRun extends Model
 {
+    use BelongsToTenant;
+
     public const STATUS_RUNNING = 'running';
 
     public const STATUS_COMPLETED = 'completed';

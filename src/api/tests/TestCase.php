@@ -34,6 +34,21 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Turns tenancy on for this test with "localhost" as the central domain:
+     * tenants answer at http://<slug>.localhost.
+     */
+    protected function enableTenancy(): void
+    {
+        config(['tenancy.enabled' => true, 'tenancy.central_domains' => ['localhost']]);
+    }
+
+    /** Absolute URL of an API path on a tenant's host (null: central). */
+    protected function onTenant(?string $slug, string $path): string
+    {
+        return 'http://'.($slug ? $slug.'.' : '').'localhost'.$path;
+    }
+
+    /**
      * The app instance survives across requests within a test, and Sanctum's
      * guard caches the first user it resolved: switching actors mid-test would
      * keep authenticating as the previous one and hide authorization bugs.

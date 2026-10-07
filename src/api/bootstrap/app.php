@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureSuperAdmin;
+use App\Http\Middleware\IdentifyTenant;
 use App\Http\Middleware\SetLocale;
 use App\Support\DuplicateKeyResponder;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -29,6 +31,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn () => rtrim(config('app.frontend_url'), '/').'/login');
         $middleware->redirectUsersTo(fn () => rtrim(config('app.frontend_url'), '/').'/');
 
+        // Tenant first: the session user must be looked up already scoped to it
+        // (no-op while tenancy is disabled).
+        $middleware->prependToGroup('api', IdentifyTenant::class);
+
         // Response language: user's choice → Accept-Language → app.locale.
         $middleware->api(append: [SetLocale::class]);
 
@@ -36,6 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'super-admin' => EnsureSuperAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

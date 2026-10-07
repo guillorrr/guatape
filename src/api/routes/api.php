@@ -5,12 +5,17 @@ use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\TenancyController;
+use App\Http\Controllers\Api\TenantController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Every route here is prefixed with /api/v1 (bootstrap/app.php).
 // Permissions use the `recurso.accion` convention and are seeded by
 // RolePermissionSeeder; guard routes with `permission:<name>`.
+
+// Which context the SPA runs in (tenant / central); public.
+Route::get('/tenancy', TenancyController::class);
 
 // --- Auth (guest) ---
 Route::middleware('guest')->group(function () {
@@ -47,6 +52,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/attachments/{type}/{id}', [AttachmentController::class, 'store'])->whereNumber('id');
     Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'download']);
     Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy']);
+
+    // --- Platform: organizations (super admins, central domain only) ---
+    Route::middleware('super-admin')->group(function () {
+        Route::get('/tenants', [TenantController::class, 'index']);
+        Route::post('/tenants', [TenantController::class, 'store']);
+        Route::get('/tenants/{tenant}', [TenantController::class, 'show']);
+        Route::patch('/tenants/{tenant}', [TenantController::class, 'update']);
+    });
 
     // --- System: background activity, schedule, commands ---
     Route::middleware('permission:system.view')->prefix('system')->group(function () {
