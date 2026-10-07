@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /**
  * Attachments panel for any record registered in the API's
  * config/attachments.php: list, upload with progress, download, delete.
@@ -27,6 +28,7 @@ const props = withDefaults(
 );
 
 const toast = useAppToast();
+const { t } = useI18n();
 const confirm = useConfirm();
 const { formatDateTime } = useFormatters();
 
@@ -68,11 +70,11 @@ async function upload() {
 
 function remove(item: Attachment) {
   confirm.require({
-    header: 'Eliminar adjunto',
-    message: `¿Eliminar «${item.original_filename}»?`,
+    header: t('forms.attachments.deleteTitle'),
+    message: t('forms.attachments.deleteMessage', { name: item.original_filename }),
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: { label: 'Cancelar', severity: 'secondary', outlined: true },
-    acceptProps: { label: 'Eliminar', severity: 'danger' },
+    rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
+    acceptProps: { label: t('common.delete'), severity: 'danger' },
     defaultFocus: 'reject',
     accept: async () => {
       await attachmentService.destroy(item.id);
@@ -96,7 +98,7 @@ watch(() => [props.type, props.id], load);
       <AppFileInput v-model="pending" multiple :accept="accept" :max-kb="maxKb" />
       <div v-if="pending.length" class="attachments__upload">
         <Button
-          :label="`Subir ${pending.length} archivo${pending.length > 1 ? 's' : ''}`"
+          :label="t('forms.attachments.upload', { n: pending.length }, pending.length)"
           icon="pi pi-upload"
           size="small"
           :loading="progress !== null"
@@ -106,8 +108,8 @@ watch(() => [props.type, props.id], load);
       </div>
     </template>
 
-    <p v-if="loading" class="attachments__muted">Cargando…</p>
-    <p v-else-if="!items.length" class="attachments__muted">Sin adjuntos.</p>
+    <p v-if="loading" class="attachments__muted">{{ t('common.loading') }}</p>
+    <p v-else-if="!items.length" class="attachments__muted">{{ t('forms.attachments.empty') }}</p>
     <ul v-else class="attachments__list">
       <li v-for="item in items" :key="item.id">
         <i class="pi pi-paperclip" aria-hidden="true" />
@@ -125,7 +127,7 @@ watch(() => [props.type, props.id], load);
           rounded
           size="small"
           severity="danger"
-          :aria-label="`Eliminar ${item.original_filename}`"
+          :aria-label="t('forms.attachments.delete', { name: item.original_filename })"
           @click="remove(item)"
         />
       </li>

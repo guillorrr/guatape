@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import AppLocaleSwitcher from '@/molecules/AppLocaleSwitcher.vue';
 import { useAuthStore } from '@/core/stores/auth.store';
 
 const auth = useAuthStore();
+const { t } = useI18n();
 const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 </script>
 
@@ -12,8 +15,9 @@ const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
         {{ appName }}
       </RouterLink>
       <nav class="app-header__nav">
-        <RouterLink v-if="auth.isAuthenticated" to="/app">Ir a la aplicación</RouterLink>
-        <RouterLink v-else :to="{ name: 'login' }">Iniciar sesión</RouterLink>
+        <AppLocaleSwitcher />
+        <RouterLink v-if="auth.isAuthenticated" to="/app">{{ t('app.goToApp') }}</RouterLink>
+        <RouterLink v-else :to="{ name: 'login' }">{{ t('app.login') }}</RouterLink>
       </nav>
     </div>
   </header>

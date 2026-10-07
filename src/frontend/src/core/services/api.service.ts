@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { currentLocale, i18n } from '@/i18n';
 
 /**
  * HTTP client for the Laravel API.
@@ -69,11 +70,10 @@ function toApiError(
   }>,
 ): ApiError {
   if (!error.response) {
-    return new ApiError('No se pudo conectar con el servidor.', 0);
+    return new ApiError(i18n.global.t('errors.network'), 0);
   }
   const { status, data } = error.response;
-  const fallback =
-    status >= 500 ? 'Error del servidor. Probá de nuevo en unos minutos.' : 'La solicitud falló.';
+  const fallback = i18n.global.t(status >= 500 ? 'errors.server' : 'errors.requestFailed');
   return new ApiError(
     data?.message || fallback,
     status,
@@ -82,6 +82,12 @@ function toApiError(
     data?.details ?? null,
   );
 }
+
+// The API answers in the UI's language (SetLocale) unless the user saved one.
+apiClient.interceptors.request.use((config) => {
+  config.headers.set('Accept-Language', currentLocale());
+  return config;
+});
 
 apiClient.interceptors.response.use(
   (response) => response,

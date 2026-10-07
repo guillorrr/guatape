@@ -28,6 +28,8 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  /** Saved UI/mail language; null follows the browser. */
+  locale: string | null;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;

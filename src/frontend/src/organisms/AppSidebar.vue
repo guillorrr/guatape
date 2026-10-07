@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
 import { useLayoutStore } from '@/core/stores/layout.store';
 import { usePermissions } from '@/composables/usePermissions';
 import { menu, type MenuItem } from '@/core/navigation';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const layout = useLayoutStore();
@@ -70,7 +72,7 @@ function onGroupClick(item: MenuItem) {
           @click="layout.closeOnMobile()"
         >
           <i :class="item.icon" />
-          <span>{{ item.label }}</span>
+          <span>{{ t(item.label) }}</span>
         </RouterLink>
 
         <div v-else class="nav-group">
@@ -80,7 +82,7 @@ function onGroupClick(item: MenuItem) {
             @click="onGroupClick(item)"
           >
             <i :class="item.icon" />
-            <span>{{ item.label }}</span>
+            <span>{{ t(item.label) }}</span>
             <i
               class="pi pi-chevron-down nav-group__arrow"
               :class="{ 'nav-group__arrow--open': expanded.has(item.label) }"
@@ -97,7 +99,7 @@ function onGroupClick(item: MenuItem) {
                 @click="layout.closeOnMobile()"
               >
                 <i :class="child.icon" />
-                <span>{{ child.label }}</span>
+                <span>{{ t(child.label) }}</span>
               </RouterLink>
             </div>
           </transition>

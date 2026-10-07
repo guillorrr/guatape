@@ -24,8 +24,10 @@ import { useAuthStore } from '@/core/stores/auth.store';
 import { ApiError } from '@/core/services/api.service';
 import { userService } from '@/core/services/user.service';
 import type { Role } from '@/core/models';
+import { useI18n } from 'vue-i18n';
 
 const auth = useAuthStore();
+const { t } = useI18n();
 const toast = useAppToast();
 const { can } = usePermissions();
 
@@ -48,11 +50,12 @@ onMounted(async () => {
   roles.value = (await userService.roles()).data.data;
 });
 
-const phoneTypes = [
-  { label: 'Celular', value: 'mobile' },
-  { label: 'Trabajo', value: 'work' },
-  { label: 'Casa', value: 'home' },
-];
+const phoneTypes = computed(() =>
+  (['mobile', 'work', 'home'] as const).map((value) => ({
+    value,
+    label: t(`formKit.phoneTypes.${value}`),
+  })),
+);
 
 // Inline create from the remote select.
 const quickCreate = useForm({ name: '', email: '', password: '', password_confirmation: '' });
@@ -88,28 +91,24 @@ const payload = computed(() =>
 
 <template>
   <div class="kit">
-    <h1>Kit de formularios</h1>
-    <p class="kit__muted">Referencia viva de los componentes (solo en desarrollo).</p>
+    <h1>{{ t('nav.formKit') }}</h1>
+    <p class="kit__muted">{{ t('formKit.intro') }}</p>
 
     <div class="kit__grid">
       <section class="kit__card">
-        <h2>Selects remotos</h2>
-        <AppField label="Rol (filtra el siguiente)" for="kit-role">
+        <h2>{{ t('formKit.remoteSelects') }}</h2>
+        <AppField :label="t('formKit.role')" for="kit-role">
           <Select
             v-model="form.data.role"
             input-id="kit-role"
             :options="roleOptions"
             option-label="label"
             option-value="value"
-            placeholder="Todos"
+            :placeholder="t('formKit.all')"
             show-clear
           />
         </AppField>
-        <AppField
-          label="Responsable"
-          for="kit-user"
-          hint="Dependiente del rol; permite crear uno nuevo."
-        >
+        <AppField :label="t('formKit.manager')" for="kit-user" :hint="t('formKit.managerHint')">
           <AppRemoteSelect
             v-model="form.data.user_id"
             input-id="kit-user"
@@ -120,7 +119,7 @@ const payload = computed(() =>
             @create="openQuickCreate"
           />
         </AppField>
-        <AppField label="Observadores" for="kit-watchers">
+        <AppField :label="t('formKit.watchers')" for="kit-watchers">
           <AppRemoteSelect
             v-model="form.data.watchers"
             input-id="kit-watchers"
@@ -131,25 +130,25 @@ const payload = computed(() =>
       </section>
 
       <section class="kit__card">
-        <h2>Fechas</h2>
-        <AppField label="Fecha de inicio" for="kit-date">
+        <h2>{{ t('formKit.dates') }}</h2>
+        <AppField :label="t('formKit.startDate')" for="kit-date">
           <AppDatePicker v-model="form.data.start_date" input-id="kit-date" />
         </AppField>
-        <AppField label="Hora" for="kit-time">
+        <AppField :label="t('formKit.time')" for="kit-time">
           <AppTimePicker v-model="form.data.start_time" input-id="kit-time" />
         </AppField>
-        <AppField label="Período" for="kit-period">
+        <AppField :label="t('formKit.period')" for="kit-period">
           <AppDateRange v-model="form.data.period" input-id="kit-period" />
         </AppField>
       </section>
 
       <section class="kit__card">
-        <h2>Filas repetibles</h2>
+        <h2>{{ t('formKit.repeatable') }}</h2>
         <AppRepeater
           v-model="form.data.phones"
           :new-item="() => ({ type: 'mobile', number: '' })"
           :max="4"
-          add-label="Agregar teléfono"
+          :add-label="t('formKit.addPhone')"
           sortable
         >
           <template #default="{ item, index }">
@@ -159,12 +158,12 @@ const payload = computed(() =>
                 :options="phoneTypes"
                 option-label="label"
                 option-value="value"
-                :aria-label="`Tipo de teléfono ${index + 1}`"
+                :aria-label="t('formKit.phoneType', { n: index + 1 })"
               />
               <InputText
                 v-model="item.number"
-                placeholder="Número"
-                :aria-label="`Teléfono ${index + 1}`"
+                :placeholder="t('formKit.number')"
+                :aria-label="t('formKit.phone', { n: index + 1 })"
               />
             </div>
           </template>
@@ -172,13 +171,13 @@ const payload = computed(() =>
       </section>
 
       <section class="kit__card">
-        <h2>Texto enriquecido</h2>
-        <AppRichText v-model="form.data.description" placeholder="Descripción…" />
+        <h2>{{ t('formKit.richText') }}</h2>
+        <AppRichText v-model="form.data.description" :placeholder="t('formKit.description')" />
       </section>
 
       <section class="kit__card">
-        <h2>Archivos</h2>
-        <AppField label="Selección local" for="kit-files">
+        <h2>{{ t('formKit.files') }}</h2>
+        <AppField :label="t('formKit.localFiles')" for="kit-files">
           <AppFileInput
             v-model="form.data.files"
             input-id="kit-files"
@@ -187,7 +186,7 @@ const payload = computed(() =>
             :max-kb="2048"
           />
         </AppField>
-        <h3>Adjuntos de mi usuario</h3>
+        <h3>{{ t('formKit.myAttachments') }}</h3>
         <AppAttachments
           v-if="auth.user"
           :id="auth.user.id"
@@ -197,27 +196,43 @@ const payload = computed(() =>
       </section>
 
       <section class="kit__card">
-        <h2>Payload</h2>
+        <h2>{{ t('formKit.payload') }}</h2>
         <pre class="kit__payload">{{ payload }}</pre>
-        <Button label="Vaciar" severity="secondary" outlined size="small" @click="form.reset()" />
+        <Button
+          :label="t('common.clear')"
+          severity="secondary"
+          outlined
+          size="small"
+          @click="form.reset()"
+        />
       </section>
     </div>
 
     <AppModal
       :show="showQuickCreate"
-      title="Nuevo usuario"
+      :title="t('formKit.newUser')"
       size="sm"
       @close="showQuickCreate = false"
     >
       <form id="kit-quick-create" class="kit__form" @submit.prevent="saveQuickCreate">
-        <AppField label="Nombre" for="qc-name" :error="quickCreate.error('name')" required>
+        <AppField
+          :label="t('users.columns.name')"
+          for="qc-name"
+          :error="quickCreate.error('name')"
+          required
+        >
           <InputText
             id="qc-name"
             v-model="quickCreate.data.name"
             :invalid="quickCreate.hasError('name')"
           />
         </AppField>
-        <AppField label="Email" for="qc-email" :error="quickCreate.error('email')" required>
+        <AppField
+          :label="t('auth.email')"
+          for="qc-email"
+          :error="quickCreate.error('email')"
+          required
+        >
           <InputText
             id="qc-email"
             v-model="quickCreate.data.email"
@@ -227,9 +242,14 @@ const payload = computed(() =>
         </AppField>
       </form>
       <template #footer>
-        <Button label="Cancelar" text severity="secondary" @click="showQuickCreate = false" />
         <Button
-          label="Crear"
+          :label="t('common.cancel')"
+          text
+          severity="secondary"
+          @click="showQuickCreate = false"
+        />
+        <Button
+          :label="t('common.create')"
           type="submit"
           form="kit-quick-create"
           :loading="quickCreate.processing.value"

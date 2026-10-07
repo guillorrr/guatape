@@ -2,6 +2,7 @@
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import Select from 'primevue/select';
+import { useI18n } from 'vue-i18n';
 import AppCrudTable, { type CrudColumn } from '@/molecules/AppCrudTable.vue';
 import AppModal from '@/molecules/AppModal.vue';
 import { useDataTable } from '@/composables/useDataTable';
@@ -19,6 +20,7 @@ const PERSIST_KEY = 'system.activity';
 /** The page polls while open: background work changes without user action. */
 const REFRESH_MS = 15000;
 
+const { t } = useI18n();
 const { formatDateTime, formatRelativeAge } = useFormatters();
 
 const table = useDataTable<JobRun>({
@@ -32,14 +34,19 @@ const stats = ref<ActivityStats | null>(null);
 const tasks = ref<ScheduledTask[]>([]);
 
 async function loadOverview() {
-  const [s, t] = await Promise.allSettled([activityService.stats(), activityService.schedule()]);
+  const [s, sched] = await Promise.allSettled([
+    activityService.stats(),
+    activityService.schedule(),
+  ]);
   if (s.status === 'fulfilled') stats.value = s.value.data.data;
-  if (t.status === 'fulfilled') tasks.value = t.value.data.data;
+  if (sched.status === 'fulfilled') tasks.value = sched.value.data.data;
 }
 
 const descriptionByName = computed<Record<string, string>>(() =>
   Object.fromEntries(
-    tasks.value.filter((t) => t.description).map((t) => [t.name, t.description as string]),
+    tasks.value
+      .filter((task) => task.description)
+      .map((task) => [task.name, task.description as string]),
   ),
 );
 
@@ -47,11 +54,10 @@ const descriptionByName = computed<Record<string, string>>(() =>
 const domainOptions = computed(() =>
   Object.keys(stats.value?.by_domain ?? {}).map((d) => ({ label: d, value: d })),
 );
-const STATUSES: { label: string; value: RunStatus }[] = [
-  { label: 'Completado', value: 'completed' },
-  { label: 'Falló', value: 'failed' },
-  { label: 'Corriendo', value: 'running' },
-];
+const RUN_STATUSES: RunStatus[] = ['completed', 'failed', 'running'];
+const statusOptions = computed(() =>
+  RUN_STATUSES.map((value) => ({ value, label: t(`activity.status.${value}`) })),
+);
 
 function filterModel(key: 'domain' | 'status') {
   return computed({
@@ -62,14 +68,20 @@ function filterModel(key: 'domain' | 'status') {
 const domain = filterModel('domain');
 const status = filterModel('status');
 
-const columns: CrudColumn[] = [
-  { key: 'created_at', label: 'Cuándo', width: '150px' },
-  { key: 'domain', label: 'Dominio', width: '120px' },
-  { key: 'name', label: 'Proceso', sortable: true, toggleable: false },
-  { key: 'summary', label: 'Resultado', toggleable: false },
-  { key: 'status', label: 'Estado', width: '110px' },
-  { key: 'duration_ms', label: 'Duración', sortable: true, align: 'right', width: '100px' },
-];
+const columns = computed<CrudColumn[]>(() => [
+  { key: 'created_at', label: t('activity.columns.when'), width: '150px' },
+  { key: 'domain', label: t('activity.columns.domain'), width: '120px' },
+  { key: 'name', label: t('activity.columns.process'), sortable: true, toggleable: false },
+  { key: 'summary', label: t('activity.columns.result'), toggleable: false },
+  { key: 'status', label: t('activity.columns.status'), width: '110px' },
+  {
+    key: 'duration_ms',
+    label: t('activity.columns.duration'),
+    sortable: true,
+    align: 'right',
+    width: '100px',
+  },
+]);
 
 function formatMs(ms: number | null | undefined) {
   if (ms == null) return '—';
@@ -79,7 +91,7 @@ function statusSeverity(s: RunStatus) {
   return s === 'completed' ? 'success' : s === 'failed' ? 'danger' : 'warn';
 }
 function statusLabel(s: RunStatus) {
-  return s === 'completed' ? 'OK' : s === 'failed' ? 'Falló' : 'Corriendo';
+  return t(`activity.statusShort.${s}`);
 }
 
 // ---- detail ----------------------------------------------------------------
@@ -108,44 +120,44 @@ onUnmounted(() => timer && clearInterval(timer));
 <template>
   <div class="page">
     <header class="page__header">
-      <h1>Actividad</h1>
-      <Button label="Actualizar" icon="pi pi-refresh" size="small" text @click="refresh" />
+      <h1>{{ t('nav.activity') }}</h1>
+      <Button
+        :label="t('common.refresh')"
+        icon="pi pi-refresh"
+        size="small"
+        text
+        @click="refresh"
+      />
     </header>
 
     <div v-if="stats" class="stats">
       <div class="stat stat--ok">
         <span>{{ stats.completed }}</span
-        ><small>completados (24 h)</small>
+        ><small>{{ t('activity.completed24') }}</small>
       </div>
       <div class="stat" :class="{ 'stat--bad': stats.failed > 0 }">
         <span>{{ stats.failed }}</span
-        ><small>fallados (24 h)</small>
+        ><small>{{ t('activity.failed24') }}</small>
       </div>
       <div class="stat stat--run">
         <span>{{ stats.running }}</span
-        ><small>corriendo ahora</small>
+        ><small>{{ t('activity.runningNow') }}</small>
       </div>
     </div>
 
     <h2 class="section">
-      Tareas programadas <small>lo que corre solo (routes/console.php)</small>
+      {{ t('activity.scheduledTitle') }} <small>{{ t('activity.scheduledHint') }}</small>
     </h2>
     <div v-if="tasks.length" class="tasks">
       <div v-for="task in tasks" :key="task.name" class="task">
         <div>
           <code class="task__name">{{ task.name }}</code>
-          <p class="task__desc">
-            {{
-              task.description || 'Sin descripción: agregá ->description() en routes/console.php.'
-            }}
-          </p>
+          <p class="task__desc">{{ task.description || t('activity.noDescription') }}</p>
         </div>
         <div class="task__meta">
-          <span
-            ><i class="pi pi-clock" /> <code>{{ task.expression }}</code> ({{
-              task.timezone
-            }})</span
-          >
+          <span>
+            <i class="pi pi-clock" /> <code>{{ task.expression }}</code> ({{ task.timezone }})
+          </span>
           <span class="task__last">
             <template v-if="task.last_run">
               <Tag
@@ -154,17 +166,17 @@ onUnmounted(() => timer && clearInterval(timer));
               />
               {{ formatRelativeAge(task.last_run.finished_at) }}
             </template>
-            <span v-else class="muted">todavía no corrió</span>
+            <span v-else class="muted">{{ t('activity.neverRan') }}</span>
           </span>
-          <span v-if="task.next_run" class="muted"
-            >próxima: {{ formatDateTime(task.next_run) }}</span
-          >
+          <span v-if="task.next_run" class="muted">
+            {{ t('activity.nextRun', { date: formatDateTime(task.next_run) }) }}
+          </span>
         </div>
       </div>
     </div>
-    <p v-else class="muted">No hay tareas programadas.</p>
+    <p v-else class="muted">{{ t('activity.noTasks') }}</p>
 
-    <h2 class="section">Historial</h2>
+    <h2 class="section">{{ t('activity.history') }}</h2>
     <AppCrudTable
       v-model:search="table.search.value"
       :columns="columns"
@@ -178,8 +190,8 @@ onUnmounted(() => timer && clearInterval(timer));
       :sort-dir="table.sortDir.value"
       :persist-key="PERSIST_KEY"
       actions-width="60px"
-      search-placeholder="Buscar proceso o resultado…"
-      empty-text="Sin actividad registrada todavía"
+      :search-placeholder="t('activity.searchPlaceholder')"
+      :empty-text="t('activity.empty')"
       @page-change="table.goToPage"
       @per-page-change="table.setPerPage"
       @sort="table.setSort"
@@ -190,16 +202,16 @@ onUnmounted(() => timer && clearInterval(timer));
           :options="domainOptions"
           option-label="label"
           option-value="value"
-          placeholder="Dominio"
+          :placeholder="t('activity.columns.domain')"
           show-clear
           size="small"
         />
         <Select
           v-model="status"
-          :options="STATUSES"
+          :options="statusOptions"
           option-label="label"
           option-value="value"
-          placeholder="Estado"
+          :placeholder="t('activity.columns.status')"
           show-clear
           size="small"
         />
@@ -215,32 +227,39 @@ onUnmounted(() => timer && clearInterval(timer));
       <template #cell-duration_ms="{ item }">{{ formatMs(item.duration_ms) }}</template>
       <template #actions="{ item }">
         <Button
-          v-tooltip.top="'Ver detalle'"
+          v-tooltip.top="t('common.seeDetail')"
           icon="pi pi-eye"
           text
           rounded
           size="small"
-          aria-label="Ver detalle"
+          :aria-label="t('common.seeDetail')"
           @click="openDetail(item)"
         />
       </template>
     </AppCrudTable>
 
-    <AppModal :show="detail !== null" title="Detalle del proceso" size="lg" @close="detail = null">
+    <AppModal
+      :show="detail !== null"
+      :title="t('activity.detailTitle')"
+      size="lg"
+      @close="detail = null"
+    >
       <div v-if="detail" class="detail">
         <p>
-          <strong>{{ detail.name }}</strong> · {{ detail.domain }} · cola {{ detail.queue ?? '—'
-          }}<br />
+          <strong>{{ detail.name }}</strong> · {{ detail.domain }} ·
+          {{ t('activity.queue', { name: detail.queue ?? '—' }) }}<br />
           {{ formatDateTime(detail.created_at) }} · {{ formatMs(detail.duration_ms) }} ·
           <Tag :value="statusLabel(detail.status)" :severity="statusSeverity(detail.status)" />
         </p>
-        <p v-if="detail.summary"><strong>Resultado:</strong> {{ detail.summary }}</p>
+        <p v-if="detail.summary">
+          <strong>{{ t('activity.result') }}</strong> {{ detail.summary }}
+        </p>
         <template v-if="detail.exception">
-          <h3>Error</h3>
+          <h3>{{ t('activity.error') }}</h3>
           <pre class="detail__error">{{ detail.exception }}</pre>
         </template>
         <template v-if="detail.log">
-          <h3>Log</h3>
+          <h3>{{ t('activity.log') }}</h3>
           <pre class="detail__log">{{ detail.log }}</pre>
         </template>
       </div>

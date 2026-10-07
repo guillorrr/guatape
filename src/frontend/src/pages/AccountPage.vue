@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Message from 'primevue/message';
 import Tag from 'primevue/tag';
+import Select from 'primevue/select';
+import { useI18n } from 'vue-i18n';
+import { LOCALE_NAMES, SUPPORTED_LOCALES, setLocale, type AppLocale } from '@/i18n';
 import { useAuthStore } from '@/core/stores/auth.store';
 import { useAppToast } from '@/composables/useAppToast';
 import { ApiError } from '@/core/services/api.service';
 
 const auth = useAuthStore();
 const toast = useAppToast();
+const { t } = useI18n();
 
 const profile = reactive({
   name: auth.user?.name ?? '',
@@ -35,13 +39,35 @@ async function saveProfile() {
   profileErrors.value = {};
   try {
     await auth.updateProfile({ name: profile.name, email: profile.email });
-    toast.success('Perfil actualizado');
+    toast.success(t('account.profileSaved'));
   } catch (e) {
     const err = e instanceof ApiError ? e : null;
     profileErrors.value = err?.errors ?? {};
-    toast.error(err?.message ?? 'Error al guardar el perfil');
+    toast.error(err?.message ?? t('account.profileError'));
   } finally {
     profileSaving.value = false;
+  }
+}
+
+// Language: applied at once and saved on the profile (the API also uses it
+// for the emails it sends this user).
+const languageOptions = computed(() => [
+  { value: null, label: t('users.browserLanguage') },
+  ...SUPPORTED_LOCALES.map((code) => ({ value: code, label: LOCALE_NAMES[code] })),
+]);
+const language = ref<AppLocale | null>((auth.user?.locale as AppLocale | null) ?? null);
+const languageSaving = ref(false);
+
+async function saveLanguage(value: AppLocale | null) {
+  languageSaving.value = true;
+  try {
+    await auth.updateProfile({ locale: value });
+    if (value) setLocale(value);
+    toast.success(t('account.languageSaved'));
+  } catch (e) {
+    toast.error(e instanceof ApiError ? e.message : t('account.profileError'));
+  } finally {
+    languageSaving.value = false;
   }
 }
 
@@ -58,14 +84,14 @@ async function changePassword() {
   passwordErrors.value = {};
   try {
     await auth.changePassword({ ...passwordForm });
-    toast.success('Contraseña actualizada. Las otras sesiones fueron cerradas.');
+    toast.success(t('account.passwordSaved'));
     passwordForm.current_password = '';
     passwordForm.password = '';
     passwordForm.password_confirmation = '';
   } catch (e) {
     const err = e instanceof ApiError ? e : null;
     passwordErrors.value = err?.errors ?? {};
-    toast.error(err?.message ?? 'Error al cambiar la contraseña');
+    toast.error(err?.message ?? t('account.passwordError'));
   } finally {
     passwordSaving.value = false;
   }
@@ -78,11 +104,11 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
 
 <template>
   <div class="account">
-    <h1>Mi cuenta</h1>
+    <h1>{{ t('nav.account') }}</h1>
 
     <section class="account__card">
       <header>
-        <h2>Perfil</h2>
+        <h2>{{ t('account.profile') }}</h2>
         <div v-if="auth.roles.length" class="account__roles">
           <Tag v-for="r in auth.roles" :key="r" :value="r" severity="info" />
         </div>
@@ -90,7 +116,7 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
 
       <form class="account__form" @submit.prevent="saveProfile">
         <div class="account__field">
-          <label for="profile-name">Nombre</label>
+          <label for="profile-name">{{ t('account.name') }}</label>
           <InputText
             id="profile-name"
             v-model="profile.name"
@@ -103,7 +129,7 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
         </div>
 
         <div class="account__field">
-          <label for="profile-email">Email</label>
+          <label for="profile-email">{{ t('auth.email') }}</label>
           <InputText
             id="profile-email"
             v-model="profile.email"
@@ -116,22 +142,45 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
           </small>
         </div>
 
-        <Button type="submit" label="Guardar perfil" icon="pi pi-save" :loading="profileSaving" />
+        <Button
+          type="submit"
+          :label="t('account.saveProfile')"
+          icon="pi pi-save"
+          :loading="profileSaving"
+        />
       </form>
     </section>
 
     <section class="account__card">
       <header>
-        <h2>Cambiar contraseña</h2>
+        <h2>{{ t('common.language') }}</h2>
+      </header>
+      <div class="account__field">
+        <Select
+          v-model="language"
+          :options="languageOptions"
+          option-label="label"
+          option-value="value"
+          :loading="languageSaving"
+          :aria-label="t('common.language')"
+          @update:model-value="saveLanguage"
+        />
+        <small class="account__hint-text">{{ t('account.languageHint') }}</small>
+      </div>
+    </section>
+
+    <section class="account__card">
+      <header>
+        <h2>{{ t('account.passwordTitle') }}</h2>
       </header>
 
       <Message severity="info" :closable="false" class="account__hint">
-        Al cambiar la contraseña se cerrarán todas tus otras sesiones (esta se mantiene).
+        {{ t('account.passwordHint') }}
       </Message>
 
       <form class="account__form" @submit.prevent="changePassword">
         <div class="account__field">
-          <label for="current-password">Contraseña actual</label>
+          <label for="current-password">{{ t('account.currentPassword') }}</label>
           <Password
             v-model="passwordForm.current_password"
             input-id="current-password"
@@ -147,7 +196,7 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
         </div>
 
         <div class="account__field">
-          <label for="new-password">Nueva contraseña</label>
+          <label for="new-password">{{ t('account.newPassword') }}</label>
           <Password
             v-model="passwordForm.password"
             input-id="new-password"
@@ -162,7 +211,7 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
         </div>
 
         <div class="account__field">
-          <label for="new-password-confirm">Repetir nueva contraseña</label>
+          <label for="new-password-confirm">{{ t('account.confirmPassword') }}</label>
           <Password
             v-model="passwordForm.password_confirmation"
             input-id="new-password-confirm"
@@ -175,7 +224,7 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
 
         <Button
           type="submit"
-          label="Cambiar contraseña"
+          :label="t('account.passwordTitle')"
           icon="pi pi-key"
           :loading="passwordSaving"
         />
@@ -246,5 +295,8 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
   &__hint {
     margin-bottom: 8px;
   }
+}
+.account__hint-text {
+  color: var(--p-text-muted-color);
 }
 </style>

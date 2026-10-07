@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T extends object">
+import { useI18n } from 'vue-i18n';
 /**
  * A list of sub-forms (phone numbers, schedule lines, contacts…). Each row is
  * rendered by the default slot; edit the row object in place with v-model on
@@ -29,12 +30,14 @@ const props = withDefaults(
   {
     min: 0,
     max: Infinity,
-    addLabel: 'Agregar',
+    addLabel: undefined,
     sortable: false,
-    emptyText: 'Sin elementos.',
+    emptyText: undefined,
     disabled: false,
   },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{ 'update:modelValue': [value: T[]] }>();
 
@@ -64,7 +67,9 @@ function move(index: number, delta: -1 | 1) {
 
 <template>
   <div class="repeater">
-    <p v-if="!modelValue.length" class="repeater__empty">{{ emptyText }}</p>
+    <p v-if="!modelValue.length" class="repeater__empty">
+      {{ emptyText ?? t('forms.repeaterEmpty') }}
+    </p>
     <div v-for="(item, index) in modelValue" :key="index" class="repeater__row">
       <div class="repeater__body">
         <slot :item="item" :index="index" />
@@ -72,36 +77,36 @@ function move(index: number, delta: -1 | 1) {
       <div class="repeater__actions">
         <template v-if="sortable">
           <Button
-            v-tooltip.top="'Subir'"
+            v-tooltip.top="t('common.moveUp')"
             icon="pi pi-arrow-up"
             text
             rounded
             size="small"
             severity="secondary"
-            aria-label="Subir"
+            :aria-label="t('common.moveUp')"
             :disabled="disabled || index === 0"
             @click="move(index, -1)"
           />
           <Button
-            v-tooltip.top="'Bajar'"
+            v-tooltip.top="t('common.moveDown')"
             icon="pi pi-arrow-down"
             text
             rounded
             size="small"
             severity="secondary"
-            aria-label="Bajar"
+            :aria-label="t('common.moveDown')"
             :disabled="disabled || index === modelValue.length - 1"
             @click="move(index, 1)"
           />
         </template>
         <Button
-          v-tooltip.top="'Quitar'"
+          v-tooltip.top="t('common.remove')"
           icon="pi pi-trash"
           text
           rounded
           size="small"
           severity="danger"
-          aria-label="Quitar"
+          :aria-label="t('common.remove')"
           :disabled="!canRemove"
           @click="remove(index)"
         />
@@ -109,7 +114,7 @@ function move(index: number, delta: -1 | 1) {
     </div>
     <div>
       <Button
-        :label="addLabel"
+        :label="addLabel ?? t('common.add')"
         icon="pi pi-plus"
         size="small"
         outlined

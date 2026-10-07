@@ -7,6 +7,7 @@
  * link is UX, the route guard and the API are what actually deny access.
  */
 export interface MenuItem {
+  /** i18n key (src/locales/*.json). */
   label: string;
   icon: string;
   to?: string;
@@ -16,13 +17,13 @@ export interface MenuItem {
 }
 
 export const menu: MenuItem[] = [
-  { label: 'Inicio', icon: 'pi pi-home', to: '/app' },
+  { label: 'nav.home', icon: 'pi pi-home', to: '/app' },
   {
-    label: 'Configuración',
+    label: 'nav.settings',
     icon: 'pi pi-cog',
     children: [
       {
-        label: 'Usuarios',
+        label: 'nav.users',
         icon: 'pi pi-users',
         to: '/app/settings/users',
         permission: 'users.view',
@@ -30,17 +31,17 @@ export const menu: MenuItem[] = [
     ],
   },
   {
-    label: 'Sistema',
+    label: 'nav.system',
     icon: 'pi pi-server',
     children: [
       {
-        label: 'Actividad',
+        label: 'nav.activity',
         icon: 'pi pi-history',
         to: '/app/system/activity',
         permission: 'system.view',
       },
       {
-        label: 'Comandos',
+        label: 'nav.commands',
         icon: 'pi pi-list',
         to: '/app/system/commands',
         permission: 'system.view',
@@ -49,6 +50,6 @@ export const menu: MenuItem[] = [
   },
   // Development only: living reference of the form kit (pages/dev/FormKitPage.vue).
   ...(import.meta.env.DEV
-    ? [{ label: 'Kit de formularios', icon: 'pi pi-palette', to: '/app/dev/form-kit' }]
+    ? [{ label: 'nav.formKit', icon: 'pi pi-palette', to: '/app/dev/form-kit' }]
     : []),
 ];

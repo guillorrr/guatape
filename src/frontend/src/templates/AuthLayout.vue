@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppLocaleSwitcher from '@/molecules/AppLocaleSwitcher.vue';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 </script>
 
@@ -8,6 +10,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
       <RouterLink to="/" class="auth-layout__brand">{{ appName }}</RouterLink>
       <RouterView />
     </div>
+    <AppLocaleSwitcher class="auth-layout__locale" />
   </div>
 </template>
 
@@ -15,6 +18,8 @@ const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 .auth-layout {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  gap: 16px;
   align-items: center;
   justify-content: center;
   padding: 16px;

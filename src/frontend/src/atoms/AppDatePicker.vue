@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /**
  * Date picker bound to the API format "YYYY-MM-DD" (or null), so forms never
  * deal with Date objects or time-zone shifts. See core/utils/dates.ts.
@@ -22,11 +23,13 @@ const props = withDefaults(
     min: null,
     max: null,
     inputId: undefined,
-    placeholder: 'dd/mm/aaaa',
+    placeholder: undefined,
     invalid: false,
     disabled: false,
   },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | null] }>();
 
@@ -40,11 +43,10 @@ const date = computed({
 <template>
   <DatePicker
     v-model="date"
-    date-format="dd/mm/yy"
     :min-date="fromApiDate(min) ?? undefined"
     :max-date="fromApiDate(max) ?? undefined"
     :input-id="inputId"
-    :placeholder="placeholder"
+    :placeholder="placeholder ?? t('forms.datePlaceholder')"
     :invalid="invalid"
     :disabled="disabled"
     show-icon

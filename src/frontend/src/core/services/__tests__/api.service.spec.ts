@@ -85,3 +85,22 @@ describe('api.service', () => {
     expect(seen).toEqual([401, 403, 500]);
   });
 });
+
+describe('api.service language', () => {
+  it('sends the UI language as Accept-Language', async () => {
+    const { i18n } = await import('@/i18n');
+    const seen: string[] = [];
+    apiClient.defaults.adapter = (config) => {
+      seen.push(String(config.headers['Accept-Language']));
+      return respond(200, {})(config);
+    };
+
+    i18n.global.locale.value = 'en';
+    await api.get('/x');
+    i18n.global.locale.value = 'es';
+    await api.get('/x');
+
+    expect(seen).toEqual(['en', 'es']);
+    apiClient.defaults.adapter = undefined;
+  });
+});

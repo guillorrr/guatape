@@ -1,0 +1,272 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "close": "Cerrar",
+    "add": "Agregar",
+    "remove": "Quitar",
+    "moveUp": "Subir",
+    "moveDown": "Bajar",
+    "search": "Buscar…",
+    "loading": "Cargando…",
+    "refresh": "Actualizar",
+    "copy": "Copiar",
+    "choose": "Elegir",
+    "clear": "Vaciar",
+    "seeDetail": "Ver detalle",
+    "noResults": "Sin resultados",
+    "noData": "No hay datos",
+    "you": "vos",
+    "language": "Idioma",
+    "backHome": "Volver al inicio",
+    "confirm": "Confirmar"
+  },
+  "toast": {
+    "success": "Listo",
+    "error": "Error",
+    "info": "Info",
+    "warn": "Atención"
+  },
+  "app": {
+    "envDevTitle": "Entorno de desarrollo — sandbox, sin consecuencias reales",
+    "envProdTitle": "Entorno productivo — cuidado con cambios destructivos",
+    "toggleMenu": "Mostrar u ocultar el menú",
+    "logout": "Cerrar sesión",
+    "goToApp": "Ir a la aplicación",
+    "login": "Iniciar sesión",
+    "tagline": "Laravel 13 + Vue 3"
+  },
+  "nav": {
+    "home": "Inicio",
+    "settings": "Configuración",
+    "users": "Usuarios",
+    "system": "Sistema",
+    "activity": "Actividad",
+    "commands": "Comandos",
+    "formKit": "Kit de formularios",
+    "account": "Mi cuenta",
+    "login": "Iniciar sesión",
+    "forgotPassword": "Recuperar contraseña",
+    "resetPassword": "Nueva contraseña",
+    "notFound": "No encontrado"
+  },
+  "errors": {
+    "network": "No se pudo conectar con el servidor.",
+    "server": "Error del servidor. Probá de nuevo en unos minutos.",
+    "requestFailed": "La solicitud falló.",
+    "forbidden": "No tenés permiso para hacer esto.",
+    "sessionExpired": "Tu sesión expiró. Volvé a iniciar sesión.",
+    "uploadFailed": "Error al subir el archivo"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Contraseña",
+    "passwordConfirm": "Repetir contraseña",
+    "login": {
+      "title": "Iniciar sesión",
+      "remember": "Mantener la sesión iniciada",
+      "submit": "Ingresar",
+      "forgot": "¿Olvidaste tu contraseña?"
+    },
+    "forgot": {
+      "title": "Recuperar contraseña",
+      "sent": "Si el email está registrado, te llega un enlace para elegir una contraseña nueva.",
+      "submit": "Enviar enlace",
+      "back": "Volver a iniciar sesión"
+    },
+    "reset": {
+      "title": "Nueva contraseña",
+      "incomplete": "El enlace está incompleto. Pedí uno nuevo.",
+      "requestAnother": "Pedir otro enlace",
+      "submit": "Guardar contraseña"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hola, {name}."
+  },
+  "notFound": {
+    "message": "La página que buscás no existe."
+  },
+  "account": {
+    "profile": "Perfil",
+    "name": "Nombre",
+    "saveProfile": "Guardar perfil",
+    "profileSaved": "Perfil actualizado",
+    "profileError": "Error al guardar el perfil",
+    "languageHint": "También se usa para los mails que te enviamos.",
+    "languageSaved": "Idioma actualizado",
+    "passwordTitle": "Cambiar contraseña",
+    "passwordHint": "Al cambiar la contraseña se cerrarán todas tus otras sesiones (esta se mantiene).",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Repetir nueva contraseña",
+    "passwordSaved": "Contraseña actualizada. Las otras sesiones fueron cerradas.",
+    "passwordError": "Error al cambiar la contraseña"
+  },
+  "users": {
+    "new": "Nuevo usuario",
+    "editTitle": "Editar usuario",
+    "columns": {
+      "name": "Nombre",
+      "email": "Email",
+      "roles": "Roles",
+      "createdAt": "Alta"
+    },
+    "searchPlaceholder": "Buscar por nombre o email",
+    "empty": "No hay usuarios",
+    "allRoles": "Todos los roles",
+    "noRole": "Sin rol",
+    "browserLanguage": "Según el navegador",
+    "changePassword": "Cambiar contraseña",
+    "passwordTitle": "Contraseña de {name}",
+    "newPassword": "Nueva contraseña",
+    "passwordHint": "El usuario queda deslogueado de todas sus sesiones.",
+    "created": "Usuario creado",
+    "updated": "Usuario actualizado",
+    "deleted": "Usuario eliminado",
+    "deleteTitle": "Eliminar usuario",
+    "deleteMessage": "¿Eliminar a {name}? Se cierran todas sus sesiones."
+  },
+  "table": {
+    "columns": "Columnas",
+    "columnsSelected": "{count} columnas",
+    "visibleColumns": "Columnas visibles",
+    "resetColumns": "Restablecer",
+    "pageReport": "{first}–{last} de {total}"
+  },
+  "activity": {
+    "completed24": "completados (24 h)",
+    "failed24": "fallados (24 h)",
+    "runningNow": "corriendo ahora",
+    "scheduledTitle": "Tareas programadas",
+    "scheduledHint": "lo que corre solo (routes/console.php)",
+    "noDescription": "Sin descripción: agregá ->description() en routes/console.php.",
+    "nextRun": "próxima: {date}",
+    "neverRan": "todavía no corrió",
+    "noTasks": "No hay tareas programadas.",
+    "history": "Historial",
+    "searchPlaceholder": "Buscar proceso o resultado…",
+    "empty": "Sin actividad registrada todavía",
+    "columns": {
+      "when": "Cuándo",
+      "domain": "Dominio",
+      "process": "Proceso",
+      "result": "Resultado",
+      "status": "Estado",
+      "duration": "Duración"
+    },
+    "status": {
+      "completed": "Completado",
+      "failed": "Falló",
+      "running": "Corriendo"
+    },
+    "statusShort": {
+      "completed": "OK",
+      "failed": "Falló",
+      "running": "Corriendo"
+    },
+    "detailTitle": "Detalle del proceso",
+    "queue": "cola {name}",
+    "result": "Resultado:",
+    "error": "Error",
+    "log": "Log"
+  },
+  "commands": {
+    "title": "Comandos disponibles",
+    "count": "{n} comandos",
+    "intro": "Todo lo que la app sabe hacer por línea de comandos. Se arma leyendo el código, así que siempre está al día: si alguien agrega un comando, aparece acá solo.",
+    "searchPlaceholder": "Buscar por nombre, descripción u opción…",
+    "showHistoric": "Mostrar los {n} históricos (ya corrieron, no queda nada que hacer)",
+    "noMatch": "Ningún comando coincide con “{query}”.",
+    "scheduled": "Agendado (cron): {expression}",
+    "arguments": "Argumentos",
+    "options": "Opciones",
+    "required": "obligatorio",
+    "default": "por defecto {value}",
+    "noParams": "No lleva argumentos ni opciones.",
+    "lastRun": "Última corrida automática: {date} — {status}",
+    "copied": "Comando copiado",
+    "copyFailed": "El navegador no dejó copiar",
+    "loadFailed": "No se pudo cargar el catálogo de comandos",
+    "lifecycle": {
+      "repair": "Reparación",
+      "one_shot": "Histórico"
+    }
+  },
+  "forms": {
+    "createNew": "Crear nuevo",
+    "createQuery": "Crear «{query}»",
+    "repeaterEmpty": "Sin elementos.",
+    "datePlaceholder": "dd/mm/aaaa",
+    "timePlaceholder": "hh:mm",
+    "rangePlaceholder": "Desde – hasta",
+    "file": {
+      "dropOne": "Arrastrá un archivo o",
+      "dropMany": "Arrastrá archivos o",
+      "limit": "Hasta {size}",
+      "tooBig": "{name}: supera {size}",
+      "badType": "{name}: tipo no permitido",
+      "remove": "Quitar {name}"
+    },
+    "attachments": {
+      "upload": "Subir {n} archivo | Subir {n} archivos",
+      "empty": "Sin adjuntos.",
+      "deleteTitle": "Eliminar adjunto",
+      "deleteMessage": "¿Eliminar «{name}»?",
+      "delete": "Eliminar {name}"
+    },
+    "richText": {
+      "heading": "Título",
+      "subheading": "Subtítulo",
+      "normal": "Normal",
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "underline": "Subrayado",
+      "strike": "Tachado",
+      "ordered": "Lista numerada",
+      "bullet": "Lista con viñetas",
+      "quote": "Cita",
+      "link": "Enlace",
+      "clean": "Quitar formato"
+    }
+  },
+  "formKit": {
+    "intro": "Referencia viva de los componentes (solo en desarrollo).",
+    "remoteSelects": "Selects remotos",
+    "role": "Rol (filtra el siguiente)",
+    "all": "Todos",
+    "manager": "Responsable",
+    "managerHint": "Dependiente del rol; permite crear uno nuevo.",
+    "watchers": "Observadores",
+    "dates": "Fechas",
+    "startDate": "Fecha de inicio",
+    "time": "Hora",
+    "period": "Período",
+    "repeatable": "Filas repetibles",
+    "addPhone": "Agregar teléfono",
+    "phoneType": "Tipo de teléfono {n}",
+    "phone": "Teléfono {n}",
+    "number": "Número",
+    "phoneTypes": {
+      "mobile": "Celular",
+      "work": "Trabajo",
+      "home": "Casa"
+    },
+    "richText": "Texto enriquecido",
+    "description": "Descripción…",
+    "files": "Archivos",
+    "localFiles": "Selección local",
+    "myAttachments": "Adjuntos de mi usuario",
+    "payload": "Payload",
+    "newUser": "Nuevo usuario"
+  },
+  "format": {
+    "justNow": "recién",
+    "minutesAgo": "hace {n} m",
+    "hoursAgo": "hace {n} h",
+    "daysAgo": "hace {n} d"
+  }
+}

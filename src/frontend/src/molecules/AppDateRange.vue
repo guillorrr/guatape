@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /**
  * From/to range as two "YYYY-MM-DD" strings ([from, to], either may be null).
  * Typical use: a list filter (`?from=&to=`) or a period on a form.
@@ -17,8 +18,10 @@ const props = withDefaults(
     invalid?: boolean;
     disabled?: boolean;
   }>(),
-  { inputId: undefined, placeholder: 'Desde – hasta', invalid: false, disabled: false },
+  { inputId: undefined, placeholder: undefined, invalid: false, disabled: false },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{ 'update:modelValue': [value: Range] }>();
 
@@ -39,10 +42,9 @@ const range = computed({
   <DatePicker
     v-model="range"
     selection-mode="range"
-    date-format="dd/mm/yy"
     :manual-input="false"
     :input-id="inputId"
-    :placeholder="placeholder"
+    :placeholder="placeholder ?? t('forms.rangePlaceholder')"
     :invalid="invalid"
     :disabled="disabled"
     show-icon

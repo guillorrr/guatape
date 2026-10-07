@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 const mode = import.meta.env.MODE;
 const isDev = mode === 'development';
 </script>
@@ -7,11 +10,7 @@ const isDev = mode === 'development';
   <span
     class="env-badge"
     :class="isDev ? 'env-badge--dev' : 'env-badge--prod'"
-    :title="
-      isDev
-        ? 'Entorno de desarrollo — sandbox, sin consecuencias reales'
-        : 'Entorno productivo — cuidado con cambios destructivos'
-    "
+    :title="isDev ? t('app.envDevTitle') : t('app.envProdTitle')"
   >
     {{ isDev ? 'DEV' : 'PROD' }}
   </span>

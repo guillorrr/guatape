@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /**
  * Pick one or more files by click or drag & drop. Validates size and type in
  * the browser for quick feedback; the API validates again.
@@ -19,6 +20,8 @@ const props = withDefaults(
   }>(),
   { multiple: false, accept: undefined, maxKb: 20480, disabled: false, inputId: undefined },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{ 'update:modelValue': [files: File[]] }>();
 
@@ -52,8 +55,8 @@ function take(list: FileList | null) {
   const ok: File[] = [];
   for (const file of Array.from(list)) {
     if (file.size > props.maxKb * 1024)
-      rejected.value.push(`${file.name}: supera ${limitLabel.value}`);
-    else if (!accepts(file)) rejected.value.push(`${file.name}: tipo no permitido`);
+      rejected.value.push(t('forms.file.tooBig', { name: file.name, size: limitLabel.value }));
+    else if (!accepts(file)) rejected.value.push(t('forms.file.badType', { name: file.name }));
     else ok.push(file);
   }
   emit('update:modelValue', props.multiple ? [...props.modelValue, ...ok] : ok.slice(0, 1));
@@ -83,9 +86,17 @@ function onDrop(event: DragEvent) {
       @drop.prevent="onDrop"
     >
       <i class="pi pi-cloud-upload" aria-hidden="true" />
-      <span>Arrastrá {{ multiple ? 'archivos' : 'un archivo' }} o</span>
-      <Button label="Elegir" size="small" outlined :disabled="disabled" @click="input?.click()" />
-      <small>Hasta {{ limitLabel }}{{ accept ? ` · ${accept}` : '' }}</small>
+      <span>{{ multiple ? t('forms.file.dropMany') : t('forms.file.dropOne') }}</span>
+      <Button
+        :label="t('common.choose')"
+        size="small"
+        outlined
+        :disabled="disabled"
+        @click="input?.click()"
+      />
+      <small
+        >{{ t('forms.file.limit', { size: limitLabel }) }}{{ accept ? ` · ${accept}` : '' }}</small
+      >
       <input
         :id="inputId"
         ref="input"
@@ -108,7 +119,7 @@ function onDrop(event: DragEvent) {
           rounded
           size="small"
           severity="secondary"
-          :aria-label="`Quitar ${file.name}`"
+          :aria-label="t('forms.file.remove', { name: file.name })"
           @click="remove(index)"
         />
       </li>

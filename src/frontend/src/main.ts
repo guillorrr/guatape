@@ -5,7 +5,8 @@ import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 import AppPreset from '@/core/styles/primevue-preset';
-import { primeVueLocaleEs } from '@/core/constants/primevue-locale-es';
+import { i18n } from '@/i18n';
+import { syncPrimeVueLocale } from '@/i18n/primevue';
 import router from '@/router';
 import App from '@/App.vue';
 import 'primeicons/primeicons.css';
@@ -13,10 +14,10 @@ import '@/core/styles/main.scss';
 
 const app = createApp(App);
 
+app.use(i18n);
 app.use(createPinia());
 app.use(router);
 app.use(PrimeVue, {
-  locale: primeVueLocaleEs,
   theme: {
     preset: AppPreset,
     options: {
@@ -29,5 +30,8 @@ app.use(PrimeVue, {
 app.use(ConfirmationService);
 app.use(ToastService);
 app.directive('tooltip', Tooltip);
+
+// PrimeVue's own texts follow the UI language.
+syncPrimeVueLocale(app);
 
 app.mount('#app');

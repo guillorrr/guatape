@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="not-found">
     <h1>404</h1>
-    <p>La página que buscás no existe.</p>
-    <Button label="Volver al inicio" icon="pi pi-home" @click="router.push('/')" />
+    <p>{{ t('notFound.message') }}</p>
+    <Button :label="t('common.backHome')" icon="pi pi-home" @click="router.push('/')" />
   </div>
 </template>
 

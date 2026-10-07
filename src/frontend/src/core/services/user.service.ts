@@ -8,6 +8,7 @@ export interface UserPayload {
   password?: string;
   password_confirmation?: string;
   roles?: string[];
+  locale?: string | null;
 }
 
 export const userService = {

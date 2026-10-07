@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { api, ApiError, ensureCsrfCookie } from '@/core/services/api.service';
 import type { ItemResponse, User } from '@/core/models';
+import { isSupportedLocale, setLocale } from '@/i18n';
 
 export interface LoginCredentials {
   email: string;
@@ -18,6 +19,7 @@ export interface ChangePasswordPayload {
 export interface UpdateProfilePayload {
   name?: string;
   email?: string;
+  locale?: string | null;
 }
 
 /**
@@ -31,13 +33,19 @@ export const useAuthStore = defineStore('auth', () => {
   let loading: Promise<void> | null = null;
 
   const isAuthenticated = computed(() => user.value !== null);
+
+  /** A language saved on the profile wins over the browser's. */
+  function setUser(next: User | null): void {
+    user.value = next;
+    if (next && isSupportedLocale(next.locale)) setLocale(next.locale);
+  }
   const roles = computed<string[]>(() => user.value?.roles ?? []);
   const permissions = computed<string[]>(() => user.value?.permissions ?? []);
 
   async function fetchUser(): Promise<void> {
     try {
       const response = await api.get<ItemResponse<User>>('/auth/me');
-      user.value = response.data.data;
+      setUser(response.data.data);
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
         user.value = null;
@@ -60,7 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials: LoginCredentials): Promise<void> {
     await ensureCsrfCookie();
     const response = await api.post<ItemResponse<User>>('/auth/login', credentials);
-    user.value = response.data.data;
+    setUser(response.data.data);
     loaded.value = true;
   }
 
@@ -80,7 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function updateProfile(payload: UpdateProfilePayload): Promise<void> {
     const response = await api.patch<ItemResponse<User>>('/auth/profile', payload);
-    user.value = response.data.data;
+    setUser(response.data.data);
   }
 
   async function changePassword(payload: ChangePasswordPayload): Promise<void> {

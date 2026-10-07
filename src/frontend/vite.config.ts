@@ -27,6 +27,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.spec.ts'],
+    setupFiles: ['src/test/setup.ts'],
     // Component specs mount PrimeVue; its CSS-in-JS theme isn't needed there.
     css: false,
   },
