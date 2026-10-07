@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
 
@@ -30,5 +31,17 @@ abstract class TestCase extends BaseTestCase
         DB::setDefaultConnection('mysql_testing');
 
         $this->withHeader('Referer', 'http://localhost');
+    }
+
+    /**
+     * The app instance survives across requests within a test, and Sanctum's
+     * guard caches the first user it resolved: switching actors mid-test would
+     * keep authenticating as the previous one and hide authorization bugs.
+     */
+    public function actingAs(UserContract $user, $guard = null)
+    {
+        $this->app['auth']->forgetGuards();
+
+        return parent::actingAs($user, $guard);
     }
 }
