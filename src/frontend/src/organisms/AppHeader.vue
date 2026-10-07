@@ -21,8 +21,8 @@ const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 
 <style scoped lang="scss">
 .app-header {
-  background: var(--p-surface-card);
-  border-bottom: 1px solid var(--p-surface-border);
+  background: var(--app-surface-card);
+  border-bottom: 1px solid var(--app-surface-border);
   padding: $spacing-sm $spacing-lg;
 
   &__container {

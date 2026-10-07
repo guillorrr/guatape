@@ -268,8 +268,8 @@ onUnmounted(() => timer && clearInterval(timer));
   margin-bottom: 20px;
 }
 .stat {
-  background: var(--p-surface-card);
-  border: 1px solid var(--p-surface-border);
+  background: var(--app-surface-card);
+  border: 1px solid var(--app-surface-border);
   border-radius: 10px;
   padding: 10px 16px;
   display: flex;
@@ -309,8 +309,8 @@ onUnmounted(() => timer && clearInterval(timer));
   margin-bottom: 24px;
 }
 .task {
-  background: var(--p-surface-card);
-  border: 1px solid var(--p-surface-border);
+  background: var(--app-surface-card);
+  border: 1px solid var(--app-surface-border);
   border-radius: 10px;
   padding: 14px 16px;
   display: flex;
@@ -330,7 +330,7 @@ onUnmounted(() => timer && clearInterval(timer));
   flex-direction: column;
   gap: 4px;
   font-size: 0.8rem;
-  border-top: 1px solid var(--p-surface-border);
+  border-top: 1px solid var(--app-surface-border);
   padding-top: 8px;
 }
 .task__last {

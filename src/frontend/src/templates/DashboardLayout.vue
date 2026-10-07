@@ -89,7 +89,7 @@ async function logout() {
   margin-left: 260px;
   display: flex;
   flex-direction: column;
-  background: var(--p-surface-ground);
+  background: var(--app-surface-ground);
   transition: margin-left 0.2s ease;
 }
 
@@ -105,8 +105,8 @@ async function logout() {
   gap: 8px;
   min-height: var(--app-topbar-height);
   padding: 12px 24px;
-  background: var(--p-surface-card);
-  border-bottom: 1px solid var(--p-surface-border);
+  background: var(--app-surface-card);
+  border-bottom: 1px solid var(--app-surface-border);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -154,7 +154,7 @@ async function logout() {
   cursor: pointer;
 }
 .layout__user:hover {
-  background: var(--p-surface-ground);
+  background: var(--app-surface-ground);
   color: var(--p-text-color);
 }
 

@@ -197,8 +197,8 @@ function firstError(field: string, errors: Record<string, string[]>): string | u
   }
 
   &__card {
-    background: var(--p-surface-card);
-    border: 1px solid var(--p-surface-border);
+    background: var(--app-surface-card);
+    border: 1px solid var(--app-surface-border);
     border-radius: var(--p-border-radius);
     padding: 24px;
 
