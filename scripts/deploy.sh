@@ -43,6 +43,10 @@ main() {
   step "Building and starting services"
   "${DC[@]}" up -d --build --remove-orphans
 
+  # nginx resolves `api` once at start; a recreated api container has a new
+  # IP and nginx would answer 502 until reloaded.
+  "${DC[@]}" exec -T nginx nginx -s reload 2>/dev/null || "${DC[@]}" restart nginx
+
   step "Waiting for db"
   for i in $(seq 1 30); do
     if "${DC[@]}" exec -T db sh -c 'mysqladmin ping -h localhost -uroot -p"$MYSQL_ROOT_PASSWORD"' >/dev/null 2>&1; then
@@ -84,7 +88,7 @@ main() {
 
   step "Smoke test"
   for i in 1 2 3 4 5; do
-    if "${DC[@]}" exec -T nginx wget -qO- http://localhost/up >/dev/null 2>&1; then
+    if "${DC[@]}" exec -T nginx wget -qO- http://127.0.0.1/up >/dev/null 2>&1; then
       echo "  ✓ /up healthy"; "${DC[@]}" ps; exit 0
     fi
     sleep 3
