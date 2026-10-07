@@ -1,26 +1,19 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/core/stores/auth.store';
-import AppButton from '@/atoms/AppButton.vue';
 
 const auth = useAuthStore();
+const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
 </script>
 
 <template>
   <header class="app-header">
     <div class="app-header__container">
       <RouterLink to="/" class="app-header__logo">
-        Guatape
+        {{ appName }}
       </RouterLink>
       <nav class="app-header__nav">
-        <template v-if="auth.isAuthenticated">
-          <RouterLink to="/dashboard">Dashboard</RouterLink>
-          <AppButton variant="ghost" size="sm" @click="auth.logout()">
-            Cerrar sesion
-          </AppButton>
-        </template>
-        <template v-else>
-          <RouterLink to="/login">Iniciar sesion</RouterLink>
-        </template>
+        <RouterLink v-if="auth.isAuthenticated" to="/app">Ir a la aplicación</RouterLink>
+        <RouterLink v-else :to="{ name: 'login' }">Iniciar sesión</RouterLink>
       </nav>
     </div>
   </header>
@@ -28,8 +21,8 @@ const auth = useAuthStore();
 
 <style scoped lang="scss">
 .app-header {
-  background: $white;
-  border-bottom: 1px solid $gray-200;
+  background: var(--p-surface-card);
+  border-bottom: 1px solid var(--p-surface-border);
   padding: $spacing-sm $spacing-lg;
 
   &__container {
@@ -43,7 +36,7 @@ const auth = useAuthStore();
   &__logo {
     font-size: $font-size-xl;
     font-weight: 700;
-    color: $gray-900;
+    color: var(--p-text-color);
 
     &:hover {
       text-decoration: none;

@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import AppButton from '@/atoms/AppButton.vue';
+import Button from 'primevue/button'
+import { useAuthStore } from '@/core/stores/auth.store'
+
+const auth = useAuthStore()
+const appName = import.meta.env.VITE_APP_NAME || 'Guatape'
 </script>
 
 <template>
   <div class="home-page">
-    <h1>Guatape</h1>
-    <p>Laravel 12 + Vue 3 scaffold</p>
-    <RouterLink to="/login">
-      <AppButton>Iniciar sesion</AppButton>
+    <h1>{{ appName }}</h1>
+    <p>Laravel 13 + Vue 3</p>
+    <RouterLink v-if="auth.isAuthenticated" to="/app">
+      <Button label="Ir a la aplicación" icon="pi pi-arrow-right" icon-pos="right" />
+    </RouterLink>
+    <RouterLink v-else :to="{ name: 'login' }">
+      <Button label="Iniciar sesión" />
     </RouterLink>
   </div>
 </template>
@@ -27,7 +34,7 @@ import AppButton from '@/atoms/AppButton.vue';
   }
 
   p {
-    color: $gray-500;
+    color: var(--p-text-muted-color);
   }
 }
 </style>
