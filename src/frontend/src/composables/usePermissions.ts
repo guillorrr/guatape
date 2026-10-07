@@ -22,17 +22,20 @@ export function usePermissions() {
     return checkRoles.some((r) => roles.value.includes(r));
   }
 
+  // Super admins can do everything, as on the API (Gate::before).
+  const isSuperAdmin = computed(() => auth.user?.is_super_admin === true);
+
   function can(permission: string): boolean {
-    return permissions.value.includes(permission);
+    return isSuperAdmin.value || permissions.value.includes(permission);
   }
 
   function canAny(...checkPermissions: string[]): boolean {
-    return checkPermissions.some((p) => permissions.value.includes(p));
+    return isSuperAdmin.value || checkPermissions.some((p) => permissions.value.includes(p));
   }
 
   function canAll(...checkPermissions: string[]): boolean {
-    return checkPermissions.every((p) => permissions.value.includes(p));
+    return isSuperAdmin.value || checkPermissions.every((p) => permissions.value.includes(p));
   }
 
-  return { roles, permissions, hasRole, hasAnyRole, can, canAny, canAll };
+  return { roles, permissions, isSuperAdmin, hasRole, hasAnyRole, can, canAny, canAll };
 }

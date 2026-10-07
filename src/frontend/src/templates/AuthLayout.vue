@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import AppLocaleSwitcher from '@/molecules/AppLocaleSwitcher.vue';
+import { useTenancyStore } from '@/core/stores/tenancy.store';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
+const tenancy = useTenancyStore();
+const appName = computed(
+  () => tenancy.tenant?.name ?? (import.meta.env.VITE_APP_NAME || 'Guatape'),
+);
 </script>
 
 <template>

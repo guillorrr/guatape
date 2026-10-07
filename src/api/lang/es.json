@@ -2,10 +2,12 @@
     "A record with :column = ':value' already exists (:type #:id \":label\").": "Ya existe un registro con :column = ':value' (:type #:id \":label\").",
     "A record with :column = ':value' already exists.": "Ya existe un registro con :column = ':value'.",
     "Logged out.": "Sesión cerrada.",
+    "Organization not found.": "No encontramos esa organización.",
     "Password updated.": "Contraseña actualizada.",
     "Password updated. The user was signed out of every session.": "Contraseña actualizada. Se cerraron todas las sesiones del usuario.",
     "The file is no longer on disk.": "El archivo ya no está en el disco.",
     "The system must keep at least one admin.": "El sistema tiene que tener al menos un admin.",
+    "This organization is suspended.": "Esta organización está suspendida.",
     "User deleted.": "Usuario eliminado.",
     "You cannot delete your own user.": "No podés eliminar tu propio usuario."
 }

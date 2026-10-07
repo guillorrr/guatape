@@ -183,6 +183,11 @@ return [
         'notes' => 'notas',
         'token' => 'token',
         'locale' => 'idioma',
+        'slug' => 'subdominio',
+        'domain' => 'dominio',
+        'admin.name' => 'nombre del admin',
+        'admin.email' => 'email del admin',
+        'admin.password' => 'contraseña del admin',
     ],
 
 ];

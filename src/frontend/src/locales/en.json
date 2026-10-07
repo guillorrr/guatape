@@ -51,7 +51,9 @@
     "login": "Sign in",
     "forgotPassword": "Forgot password",
     "resetPassword": "New password",
-    "notFound": "Not found"
+    "notFound": "Not found",
+    "platform": "Platform",
+    "tenants": "Organizations"
   },
   "errors": {
     "network": "Could not reach the server.",
@@ -268,5 +270,42 @@
     "minutesAgo": "{n} m ago",
     "hoursAgo": "{n} h ago",
     "daysAgo": "{n} d ago"
+  },
+  "tenancy": {
+    "unavailableTitle": "Unavailable",
+    "notFoundTitle": "We couldn't find this organization",
+    "notFoundMessage": "Check the address: no organization is registered under this name.",
+    "suspendedTitle": "Organization suspended",
+    "suspendedMessage": "Access to this organization is suspended. Contact whoever manages the account."
+  },
+  "tenants": {
+    "new": "New organization",
+    "editTitle": "Edit organization",
+    "columns": {
+      "name": "Name",
+      "slug": "Subdomain",
+      "url": "Address",
+      "users": "Users",
+      "status": "Status",
+      "createdAt": "Created"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "searchPlaceholder": "Search by name, subdomain or domain",
+    "empty": "No organizations",
+    "domain": "Custom domain",
+    "slugHint": "Lowercase, numbers and dashes. It's their address: subdomain.central-domain.",
+    "domainHint": "Optional, e.g. app.company.com (it must point to this server).",
+    "firstAdmin": "First admin",
+    "created": "Organization created",
+    "updated": "Organization updated",
+    "suspend": "Suspend",
+    "activate": "Reactivate",
+    "suspendTitle": "Suspend organization",
+    "suspendMessage": "Suspend {name}? Its users won't be able to sign in until you reactivate it.",
+    "activateTitle": "Reactivate organization",
+    "activateMessage": "Reactivate {name}? Its users can sign in again."
   }
 }

@@ -59,6 +59,7 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 | CRUD list pages (`AppCrudTable` + `useDataTable` + `ListQuery`) | `docs/datatable-pattern.md` |
 | Forms: `useForm`, `AppField` and the form kit (remote selects, repeater, dates, rich text, files) | `docs/forms.md` |
 | Languages: how es/en are picked, writing UI and API text, adding a language | `docs/i18n.md` |
+| Multi-tenancy (optional): tenant resolution, tenant-owned models, jobs, super admins | `docs/tenancy.md` |
 | CI, production stack, deploy script, rollback | `docs/deployment.md` |
 
 ## Architecture Conventions
@@ -69,6 +70,7 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 - **Output**: JsonResources; lists via `ListQuery` + `Resource::collection()` (`{data, links, meta}`).
 - **Authorization**: `permission:<resource.action>` middleware on routes; permissions live in `RolePermissionSeeder`.
 - **Errors**: 422 `{message, errors}`, 409 `duplicate_unique_key` (`DuplicateKeyResponder`), 401/403/404 `{message}`.
+- **Tenancy** (optional, `TENANCY_ENABLED`): tables owned by an organization get a nullable `tenant_id` + `use BelongsToTenant`; code that must run as an organization uses `Tenancy::run()`. See `docs/tenancy.md`.
 - **Background work**: jobs on Redis (`queue-worker`), schedule in `routes/console.php` with `->description()`; every run is recorded in `job_runs`.
 - **Integrations**: External API wrappers in `app/Integrations/<Name>`. Isolated, testable.
 - **Env vars**: a new variable goes, in the same change, into `src/api/.env.example` and `.env.prod.example` with a comment saying what happens when it's empty.
@@ -129,7 +131,7 @@ npm run backup:db
 scripts/deploy.sh [ref]     # Production deploy, on the server (docs/deployment.md)
 ```
 
-Local login after setup: `admin@example.com` / `password`.
+Local login after setup: `admin@example.com` / `password` (with tenancy on: also `superadmin@example.com` on the central domain; `admin@example.com` lives in `acme.<domain>`).
 
 ## Docker Services
 
@@ -175,6 +177,13 @@ All host ports are configurable in the root `.env`.
 - PHP: Laravel Pint (`vendor/bin/pint`, CI runs `--test`)
 - TypeScript/Vue: ESLint 9 (`src/frontend/eslint.config.js`) + Prettier (`.prettierrc`); lint, format check, type-check and Vitest run in CI
 - Commits: Conventional Commits (`feat:`, `fix:`, `docs:`…), Husky + commitlint
+
+## Git workflow (git flow)
+- `develop` is the integration branch. Every change starts from it as `feature/<topic>` and goes back through a PR to `develop` (CI must be green).
+- `main` only holds released code. A release is `release/x.y.z` from `develop` → PR to `main`, tag `vx.y.z` on the merge, then `main` merged back into `develop`. `deploy.yml` deploys `main`.
+- Urgent production fixes: `hotfix/<topic>` from `main` → PR to `main` (tag a patch version) and back into `develop`.
+- Never open a feature PR against `main`, and check the base branch of a stacked PR hasn't been merged already.
+- Branch prefixes are long (`feature/`, `release/`, `hotfix/`); commit messages follow Conventional Commits.
 
 ## Git discipline (parallel agents)
 - **Never use `git add -A`, `git add .` or `git add <directory>`.** Several sessions may work on the same tree; a blanket add sweeps someone else's files into your commit. Stage the specific files this task touched, by path, after `git status`.

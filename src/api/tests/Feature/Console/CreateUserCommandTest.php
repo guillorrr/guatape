@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Console;
 
+use App\Models\Tenant;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,5 +36,26 @@ class CreateUserCommandTest extends TestCase
         $this->artisan('users:create', ['email' => 'taken@example.com'])
             ->expectsQuestion('Password', 'long-enough-pass')
             ->assertFailed();
+    }
+
+    public function test_creates_users_inside_an_organization_or_as_super_admin(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $this->enableTenancy();
+        $acme = Tenant::factory()->create(['slug' => 'acme']);
+
+        $this->artisan('users:create', ['email' => 'ana@acme.test', '--tenant' => 'acme'])
+            ->expectsQuestion('Password', 'long-enough-pass')
+            ->assertSuccessful();
+        $this->assertSame($acme->id, User::withoutTenancy()->where('email', 'ana@acme.test')->value('tenant_id'));
+
+        $this->artisan('users:create', ['email' => 'root@example.com', '--super-admin' => true])
+            ->expectsQuestion('Password', 'long-enough-pass')
+            ->assertSuccessful();
+        $root = User::withoutTenancy()->where('email', 'root@example.com')->firstOrFail();
+        $this->assertTrue($root->is_super_admin);
+        $this->assertNull($root->tenant_id);
+
+        $this->artisan('users:create', ['email' => 'x@example.com', '--tenant' => 'nope'])->assertFailed();
     }
 }

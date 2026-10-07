@@ -5,15 +5,21 @@ import { computed, ref } from 'vue';
 import { useLayoutStore } from '@/core/stores/layout.store';
 import { usePermissions } from '@/composables/usePermissions';
 import { menu, type MenuItem } from '@/core/navigation';
+import { useTenancyStore } from '@/core/stores/tenancy.store';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const layout = useLayoutStore();
-const { canAny } = usePermissions();
-const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
+const { canAny, isSuperAdmin } = usePermissions();
+const tenancy = useTenancyStore();
+// Inside an organization the brand is its name.
+const appName = computed(
+  () => tenancy.tenant?.name ?? (import.meta.env.VITE_APP_NAME || 'Guatape'),
+);
 
 function allowed(item: MenuItem): boolean {
+  if (item.superAdmin) return isSuperAdmin.value && tenancy.isCentral;
   if (!item.permission) return true;
   const required = Array.isArray(item.permission) ? item.permission : [item.permission];
   return canAny(...required);
