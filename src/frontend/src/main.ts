@@ -5,6 +5,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 import AppPreset from '@/core/styles/primevue-preset';
+import { primeVueLocaleEs } from '@/core/constants/primevue-locale-es';
 import router from '@/router';
 import App from '@/App.vue';
 import 'primeicons/primeicons.css';
@@ -15,6 +16,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(PrimeVue, {
+  locale: primeVueLocaleEs,
   theme: {
     preset: AppPreset,
     options: {
