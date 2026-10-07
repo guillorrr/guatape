@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T">
+import { useI18n } from 'vue-i18n';
 import DataTable, { type DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
 import MultiSelect from 'primevue/multiselect';
@@ -54,8 +55,8 @@ const props = withDefaults(
   }>(),
   {
     rowsPerPageOptions: () => ROWS_PER_PAGE_OPTIONS,
-    emptyText: 'No hay datos',
-    searchPlaceholder: 'Buscar...',
+    emptyText: undefined,
+    searchPlaceholder: undefined,
     rowClickable: false,
     hasActions: true,
     actionsWidth: '110px',
@@ -70,6 +71,8 @@ const props = withDefaults(
 
 // Filas desplegadas (PrimeVue las indexa por `dataKey`).
 const expandedRows = ref<Record<string, boolean>>({});
+
+const { t } = useI18n();
 
 const emit = defineEmits<{
   'update:search': [value: string];
@@ -165,7 +168,11 @@ function resetVisibleColumns() {
 <template>
   <div class="crud-table">
     <div class="crud-toolbar">
-      <AppSearchBar v-model="searchProxy" :placeholder="searchPlaceholder" class="crud-search" />
+      <AppSearchBar
+        v-model="searchProxy"
+        :placeholder="searchPlaceholder ?? t('common.search')"
+        class="crud-search"
+      />
       <div class="crud-filters">
         <slot name="filters" />
       </div>
@@ -175,18 +182,18 @@ function resetVisibleColumns() {
         option-label="label"
         option-value="key"
         :max-selected-labels="0"
-        :selected-items-label="`{0} columnas`"
-        placeholder="Columnas"
+        :selected-items-label="t('table.columnsSelected', { count: '{0}' })"
+        :placeholder="t('table.columns')"
         size="small"
         class="crud-cols"
       >
         <template #header>
           <div class="crud-cols-header">
-            <span>Columnas visibles</span>
+            <span>{{ t('table.visibleColumns') }}</span>
             <Button
               text
               size="small"
-              label="Reset"
+              :label="t('table.resetColumns')"
               icon="pi pi-refresh"
               @click="resetVisibleColumns"
             />
@@ -213,7 +220,7 @@ function resetVisibleColumns() {
       @update:selection="(v: T[] | T | null) => emit('update:selection', v)"
       @cell-edit-complete="(e: any) => emit('cell-edit-complete', e)"
     >
-      <template #empty>{{ emptyText }}</template>
+      <template #empty>{{ emptyText ?? t('common.noData') }}</template>
 
       <Column v-if="selectionMode === 'multiple'" selection-mode="multiple" style="width: 40px" />
 

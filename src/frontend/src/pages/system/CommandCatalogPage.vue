@@ -4,10 +4,12 @@ import Button from 'primevue/button';
 import { activityService, type CatalogCommand } from '@/core/services/activity.service';
 import { useAppToast } from '@/composables/useAppToast';
 import { useFormatters } from '@/composables/useFormatters';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref } from 'vue';
 
 const toast = useAppToast();
 const { formatDateTime } = useFormatters();
+const { t } = useI18n();
 const loading = ref(false);
 const commands = ref<CatalogCommand[]>([]);
 const query = ref('');
@@ -21,7 +23,7 @@ async function load() {
   try {
     commands.value = (await activityService.commands()).data.data;
   } catch {
-    toast.error('No se pudo cargar el catálogo de comandos');
+    toast.error(t('commands.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -68,9 +70,9 @@ function fullLine(command: CatalogCommand): string {
 async function copy(command: CatalogCommand) {
   try {
     await navigator.clipboard.writeText(fullLine(command));
-    toast.success('Comando copiado');
+    toast.success(t('commands.copied'));
   } catch {
-    toast.error('El navegador no dejó copiar');
+    toast.error(t('commands.copyFailed'));
   }
 }
 
@@ -79,30 +81,25 @@ onMounted(load);
 
 <template>
   <div class="page-header">
-    <h1>Comandos disponibles</h1>
-    <span v-if="!loading" class="count">{{ commands.length }} comandos</span>
+    <h1>{{ t('commands.title') }}</h1>
+    <span v-if="!loading" class="count">{{ t('commands.count', { n: commands.length }) }}</span>
   </div>
 
-  <p class="intro">
-    Todo lo que la app sabe hacer por línea de comandos. Se arma leyendo el código, así que siempre
-    está al día: si alguien agrega un comando, aparece acá solo.
-  </p>
+  <p class="intro">{{ t('commands.intro') }}</p>
 
   <div class="controls">
-    <InputText
-      v-model="query"
-      placeholder="Buscar por nombre, descripción u opción…"
-      class="search"
-    />
+    <InputText v-model="query" :placeholder="t('commands.searchPlaceholder')" class="search" />
     <label v-if="historicCount" class="toggle">
       <input v-model="showHistoric" type="checkbox" />
-      Mostrar los {{ historicCount }} históricos (ya corrieron, no queda nada que hacer)
+      {{ t('commands.showHistoric', { n: historicCount }) }}
     </label>
   </div>
 
-  <div v-if="loading" class="muted">Cargando…</div>
+  <div v-if="loading" class="muted">{{ t('common.loading') }}</div>
 
-  <div v-else-if="!filtered.length" class="muted">Ningún comando coincide con “{{ query }}”.</div>
+  <div v-else-if="!filtered.length" class="muted">
+    {{ t('commands.noMatch', { query }) }}
+  </div>
 
   <div v-for="[domain, items] in grouped" v-else :key="domain" class="domain">
     <h2>
@@ -114,12 +111,12 @@ onMounted(load);
         <div class="command-title">
           <code>{{ command.name }}</code>
           <span v-if="command.lifecycle !== 'recurring'" class="badge" :class="command.lifecycle">{{
-            command.lifecycle_label
+            t(`commands.lifecycle.${command.lifecycle}`)
           }}</span>
           <span
             v-if="command.schedule"
             class="badge"
-            :title="`Agendado (cron): ${command.schedule.expression}`"
+            :title="t('commands.scheduled', { expression: command.schedule.expression })"
           >
             {{ command.schedule.expression }}
           </span>
@@ -130,38 +127,47 @@ onMounted(load);
       <div v-if="openName === command.name" class="command-body">
         <p v-if="command.note" class="note">{{ command.note }}</p>
         <div v-if="command.arguments.length" class="params">
-          <h4>Argumentos</h4>
+          <h4>{{ t('commands.arguments') }}</h4>
           <div v-for="arg in command.arguments" :key="arg.name" class="param">
             <code>{{ arg.name }}</code>
-            <span v-if="arg.required" class="req">obligatorio</span>
+            <span v-if="arg.required" class="req">{{ t('commands.required') }}</span>
             <span class="param-desc">{{ arg.description || '—' }}</span>
           </div>
         </div>
 
         <div v-if="command.options.length" class="params">
-          <h4>Opciones</h4>
+          <h4>{{ t('commands.options') }}</h4>
           <div v-for="opt in command.options" :key="opt.name" class="param">
             <code>--{{ opt.name }}{{ opt.accepts_value ? '=' : '' }}</code>
             <span v-if="opt.default !== null && opt.default !== ''" class="def">
-              por defecto {{ opt.default }}
+              {{ t('commands.default', { value: String(opt.default) }) }}
             </span>
             <span class="param-desc">{{ opt.description || '—' }}</span>
           </div>
         </div>
 
         <p v-if="!command.arguments.length && !command.options.length" class="muted small">
-          No lleva argumentos ni opciones.
+          {{ t('commands.noParams') }}
         </p>
 
         <div class="run">
           <code class="line">{{ fullLine(command) }}</code>
-          <Button label="Copiar" icon="pi pi-copy" size="small" text @click="copy(command)" />
+          <Button
+            :label="t('common.copy')"
+            icon="pi pi-copy"
+            size="small"
+            text
+            @click="copy(command)"
+          />
         </div>
 
         <p v-if="command.schedule?.last_run" class="small muted">
-          Última corrida automática:
-          {{ formatDateTime(command.schedule.last_run.finished_at) }}
-          — {{ command.schedule.last_run.status }}
+          {{
+            t('commands.lastRun', {
+              date: formatDateTime(command.schedule.last_run.finished_at),
+              status: t(`activity.status.${command.schedule.last_run.status}`),
+            })
+          }}
         </p>
       </div>
     </div>

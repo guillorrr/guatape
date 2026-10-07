@@ -1,6 +1,8 @@
+import { watch } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/core/stores/auth.store';
+import { i18n } from '@/i18n';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -10,7 +12,7 @@ declare module 'vue-router' {
     guest?: boolean;
     /** Required permission(s); the user needs ANY of them. Inherited by children. */
     permission?: string | string[];
-    /** Browser tab title. */
+    /** Browser tab title, as an i18n key. */
     title?: string;
   }
 }
@@ -31,19 +33,19 @@ const routes: RouteRecordRaw[] = [
         path: 'login',
         name: 'login',
         component: () => import('@/pages/auth/LoginPage.vue'),
-        meta: { title: 'Iniciar sesión' },
+        meta: { title: 'nav.login' },
       },
       {
         path: 'forgot-password',
         name: 'forgot-password',
         component: () => import('@/pages/auth/ForgotPasswordPage.vue'),
-        meta: { title: 'Recuperar contraseña' },
+        meta: { title: 'nav.forgotPassword' },
       },
       {
         path: 'reset-password',
         name: 'reset-password',
         component: () => import('@/pages/auth/ResetPasswordPage.vue'),
-        meta: { title: 'Nueva contraseña' },
+        meta: { title: 'nav.resetPassword' },
       },
     ],
   },
@@ -56,19 +58,19 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'dashboard',
         component: () => import('@/pages/DashboardPage.vue'),
-        meta: { title: 'Inicio' },
+        meta: { title: 'nav.home' },
       },
       {
         path: 'account',
         name: 'account',
         component: () => import('@/pages/AccountPage.vue'),
-        meta: { title: 'Mi cuenta' },
+        meta: { title: 'nav.account' },
       },
       {
         path: 'settings/users',
         name: 'settings-users',
         component: () => import('@/pages/settings/UserListPage.vue'),
-        meta: { title: 'Usuarios', permission: 'users.view' },
+        meta: { title: 'nav.users', permission: 'users.view' },
       },
       // Living reference of the form kit, development builds only.
       ...(import.meta.env.DEV
@@ -77,7 +79,7 @@ const routes: RouteRecordRaw[] = [
               path: 'dev/form-kit',
               name: 'dev-form-kit',
               component: () => import('@/pages/dev/FormKitPage.vue'),
-              meta: { title: 'Kit de formularios' },
+              meta: { title: 'nav.formKit' },
             },
           ]
         : []),
@@ -89,13 +91,13 @@ const routes: RouteRecordRaw[] = [
             path: 'activity',
             name: 'system-activity',
             component: () => import('@/pages/system/ActivityPage.vue'),
-            meta: { title: 'Actividad' },
+            meta: { title: 'nav.activity' },
           },
           {
             path: 'commands',
             name: 'system-commands',
             component: () => import('@/pages/system/CommandCatalogPage.vue'),
-            meta: { title: 'Comandos' },
+            meta: { title: 'nav.commands' },
           },
         ],
       },
@@ -105,7 +107,7 @@ const routes: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/NotFoundPage.vue'),
-    meta: { title: 'No encontrado' },
+    meta: { title: 'nav.notFound' },
   },
 ];
 
@@ -139,10 +141,14 @@ router.beforeEach(async (to) => {
 });
 
 const appName = import.meta.env.VITE_APP_NAME || 'Guatape';
-router.afterEach((to) => {
+function updateTitle() {
+  const route = router.currentRoute.value;
   // [DEV] prefix so the dev tab is hard to confuse with production.
   const base = import.meta.env.DEV ? `[DEV] ${appName}` : appName;
-  document.title = to.meta.title ? `${to.meta.title} · ${base}` : base;
-});
+  document.title = route.meta.title ? `${i18n.global.t(route.meta.title)} · ${base}` : base;
+}
+router.afterEach(updateTitle);
+// Re-title the open tab when the language changes.
+watch(i18n.global.locale, updateTitle);
 
 export default router;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
@@ -10,6 +11,7 @@ import { useForm } from '@/composables/useForm';
 import { useAppToast } from '@/composables/useAppToast';
 
 const auth = useAuthStore();
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const toast = useAppToast();
@@ -17,9 +19,7 @@ const toast = useAppToast();
 const token = typeof route.query.token === 'string' ? route.query.token : '';
 const email = typeof route.query.email === 'string' ? route.query.email : '';
 const form = useForm({ password: '', password_confirmation: '' });
-const failure = ref<string | null>(
-  token && email ? null : 'El enlace está incompleto. Pedí uno nuevo.',
-);
+const failure = ref<string | null>(token && email ? null : t('auth.reset.incomplete'));
 
 async function submit() {
   failure.value = null;
@@ -37,16 +37,18 @@ async function submit() {
 
 <template>
   <form class="auth-form" @submit.prevent="submit">
-    <h1>Nueva contraseña</h1>
+    <h1>{{ t('auth.reset.title') }}</h1>
     <p v-if="email" class="auth-form__email">{{ email }}</p>
 
     <Message v-if="failure" severity="error" size="small">
       {{ failure }}
-      <RouterLink :to="{ name: 'forgot-password' }">Pedir otro enlace</RouterLink>
+      <RouterLink :to="{ name: 'forgot-password' }">{{
+        t('auth.reset.requestAnother')
+      }}</RouterLink>
     </Message>
 
     <div class="auth-form__field">
-      <label for="reset-password">Contraseña</label>
+      <label for="reset-password">{{ t('auth.password') }}</label>
       <Password
         v-model="form.data.password"
         input-id="reset-password"
@@ -60,7 +62,7 @@ async function submit() {
       }}</small>
     </div>
     <div class="auth-form__field">
-      <label for="reset-password-confirmation">Repetir contraseña</label>
+      <label for="reset-password-confirmation">{{ t('auth.passwordConfirm') }}</label>
       <Password
         v-model="form.data.password_confirmation"
         input-id="reset-password-confirmation"
@@ -73,7 +75,7 @@ async function submit() {
 
     <Button
       type="submit"
-      label="Guardar contraseña"
+      :label="t('auth.reset.submit')"
       :loading="form.processing.value"
       :disabled="!token || !email"
     />

@@ -1,0 +1,272 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "add": "Add",
+    "remove": "Remove",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "search": "Search…",
+    "loading": "Loading…",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "choose": "Choose",
+    "clear": "Clear",
+    "seeDetail": "View details",
+    "noResults": "No results",
+    "noData": "No data",
+    "you": "you",
+    "language": "Language",
+    "backHome": "Back to home",
+    "confirm": "Confirm"
+  },
+  "toast": {
+    "success": "Done",
+    "error": "Error",
+    "info": "Info",
+    "warn": "Warning"
+  },
+  "app": {
+    "envDevTitle": "Development environment — sandbox, nothing here is real",
+    "envProdTitle": "Production environment — careful with destructive changes",
+    "toggleMenu": "Show or hide the menu",
+    "logout": "Sign out",
+    "goToApp": "Go to the app",
+    "login": "Sign in",
+    "tagline": "Laravel 13 + Vue 3"
+  },
+  "nav": {
+    "home": "Home",
+    "settings": "Settings",
+    "users": "Users",
+    "system": "System",
+    "activity": "Activity",
+    "commands": "Commands",
+    "formKit": "Form kit",
+    "account": "My account",
+    "login": "Sign in",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "New password",
+    "notFound": "Not found"
+  },
+  "errors": {
+    "network": "Could not reach the server.",
+    "server": "Server error. Try again in a few minutes.",
+    "requestFailed": "The request failed.",
+    "forbidden": "You don't have permission to do this.",
+    "sessionExpired": "Your session expired. Please sign in again.",
+    "uploadFailed": "Upload failed"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "passwordConfirm": "Repeat password",
+    "login": {
+      "title": "Sign in",
+      "remember": "Keep me signed in",
+      "submit": "Sign in",
+      "forgot": "Forgot your password?"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "sent": "If the email is registered, you'll get a link to choose a new password.",
+      "submit": "Send link",
+      "back": "Back to sign in"
+    },
+    "reset": {
+      "title": "New password",
+      "incomplete": "The link is incomplete. Request a new one.",
+      "requestAnother": "Request another link",
+      "submit": "Save password"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hi, {name}."
+  },
+  "notFound": {
+    "message": "The page you're looking for doesn't exist."
+  },
+  "account": {
+    "profile": "Profile",
+    "name": "Name",
+    "saveProfile": "Save profile",
+    "profileSaved": "Profile updated",
+    "profileError": "Could not save the profile",
+    "languageHint": "Also used for the emails we send you.",
+    "languageSaved": "Language updated",
+    "passwordTitle": "Change password",
+    "passwordHint": "Changing your password signs out every other session (this one stays).",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Repeat new password",
+    "passwordSaved": "Password updated. Your other sessions were signed out.",
+    "passwordError": "Could not change the password"
+  },
+  "users": {
+    "new": "New user",
+    "editTitle": "Edit user",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "roles": "Roles",
+      "createdAt": "Created"
+    },
+    "searchPlaceholder": "Search by name or email",
+    "empty": "No users",
+    "allRoles": "All roles",
+    "noRole": "No role",
+    "browserLanguage": "Browser's language",
+    "changePassword": "Change password",
+    "passwordTitle": "Password for {name}",
+    "newPassword": "New password",
+    "passwordHint": "The user is signed out of every session.",
+    "created": "User created",
+    "updated": "User updated",
+    "deleted": "User deleted",
+    "deleteTitle": "Delete user",
+    "deleteMessage": "Delete {name}? Every session of theirs is signed out."
+  },
+  "table": {
+    "columns": "Columns",
+    "columnsSelected": "{count} columns",
+    "visibleColumns": "Visible columns",
+    "resetColumns": "Reset",
+    "pageReport": "{first}–{last} of {total}"
+  },
+  "activity": {
+    "completed24": "completed (24 h)",
+    "failed24": "failed (24 h)",
+    "runningNow": "running now",
+    "scheduledTitle": "Scheduled tasks",
+    "scheduledHint": "what runs on its own (routes/console.php)",
+    "noDescription": "No description: add ->description() in routes/console.php.",
+    "nextRun": "next: {date}",
+    "neverRan": "hasn't run yet",
+    "noTasks": "No scheduled tasks.",
+    "history": "History",
+    "searchPlaceholder": "Search process or result…",
+    "empty": "No activity recorded yet",
+    "columns": {
+      "when": "When",
+      "domain": "Domain",
+      "process": "Process",
+      "result": "Result",
+      "status": "Status",
+      "duration": "Duration"
+    },
+    "status": {
+      "completed": "Completed",
+      "failed": "Failed",
+      "running": "Running"
+    },
+    "statusShort": {
+      "completed": "OK",
+      "failed": "Failed",
+      "running": "Running"
+    },
+    "detailTitle": "Process details",
+    "queue": "queue {name}",
+    "result": "Result:",
+    "error": "Error",
+    "log": "Log"
+  },
+  "commands": {
+    "title": "Available commands",
+    "count": "{n} commands",
+    "intro": "Everything the app can do from the command line. Built by reading the code, so it's always up to date: a new command shows up here on its own.",
+    "searchPlaceholder": "Search by name, description or option…",
+    "showHistoric": "Show the {n} historical ones (already ran, nothing left to do)",
+    "noMatch": "No command matches “{query}”.",
+    "scheduled": "Scheduled (cron): {expression}",
+    "arguments": "Arguments",
+    "options": "Options",
+    "required": "required",
+    "default": "default {value}",
+    "noParams": "Takes no arguments or options.",
+    "lastRun": "Last scheduled run: {date} — {status}",
+    "copied": "Command copied",
+    "copyFailed": "The browser didn't allow copying",
+    "loadFailed": "Could not load the command catalog",
+    "lifecycle": {
+      "repair": "Repair",
+      "one_shot": "Historical"
+    }
+  },
+  "forms": {
+    "createNew": "Create new",
+    "createQuery": "Create “{query}”",
+    "repeaterEmpty": "No items.",
+    "datePlaceholder": "mm/dd/yyyy",
+    "timePlaceholder": "hh:mm",
+    "rangePlaceholder": "From – to",
+    "file": {
+      "dropOne": "Drop a file or",
+      "dropMany": "Drop files or",
+      "limit": "Up to {size}",
+      "tooBig": "{name}: larger than {size}",
+      "badType": "{name}: file type not allowed",
+      "remove": "Remove {name}"
+    },
+    "attachments": {
+      "upload": "Upload {n} file | Upload {n} files",
+      "empty": "No attachments.",
+      "deleteTitle": "Delete attachment",
+      "deleteMessage": "Delete “{name}”?",
+      "delete": "Delete {name}"
+    },
+    "richText": {
+      "heading": "Heading",
+      "subheading": "Subheading",
+      "normal": "Normal",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strikethrough",
+      "ordered": "Numbered list",
+      "bullet": "Bulleted list",
+      "quote": "Quote",
+      "link": "Link",
+      "clean": "Clear formatting"
+    }
+  },
+  "formKit": {
+    "intro": "Living reference of the components (development only).",
+    "remoteSelects": "Remote selects",
+    "role": "Role (filters the next one)",
+    "all": "All",
+    "manager": "Owner",
+    "managerHint": "Depends on the role; can create a new one.",
+    "watchers": "Watchers",
+    "dates": "Dates",
+    "startDate": "Start date",
+    "time": "Time",
+    "period": "Period",
+    "repeatable": "Repeatable rows",
+    "addPhone": "Add phone",
+    "phoneType": "Phone type {n}",
+    "phone": "Phone {n}",
+    "number": "Number",
+    "phoneTypes": {
+      "mobile": "Mobile",
+      "work": "Work",
+      "home": "Home"
+    },
+    "richText": "Rich text",
+    "description": "Description…",
+    "files": "Files",
+    "localFiles": "Local selection",
+    "myAttachments": "My user's attachments",
+    "payload": "Payload",
+    "newUser": "New user"
+  },
+  "format": {
+    "justNow": "just now",
+    "minutesAgo": "{n} m ago",
+    "hoursAgo": "{n} h ago",
+    "daysAgo": "{n} d ago"
+  }
+}

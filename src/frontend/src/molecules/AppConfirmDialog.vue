@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import AppModal from './AppModal.vue';
 import AppButton from '@/atoms/AppButton.vue';
+
+const { t } = useI18n();
 
 defineProps<{
   show: boolean;
@@ -21,9 +24,11 @@ const emit = defineEmits<{
   <AppModal :show="show" :title="title" size="sm" @close="emit('cancel')">
     <p>{{ message }}</p>
     <template #footer>
-      <AppButton variant="ghost" @click="emit('cancel')">{{ cancelText ?? 'Cancelar' }}</AppButton>
+      <AppButton variant="ghost" @click="emit('cancel')">{{
+        cancelText ?? t('common.cancel')
+      }}</AppButton>
       <AppButton :variant="variant ?? 'danger'" @click="emit('confirm')">{{
-        confirmText ?? 'Confirmar'
+        confirmText ?? t('common.confirm')
       }}</AppButton>
     </template>
   </AppModal>

@@ -47,7 +47,6 @@ class CommandCatalog
                 'options' => self::options($command),
                 'example' => self::example($name, $command),
                 'lifecycle' => $meta->lifecycle->value,
-                'lifecycle_label' => $meta->lifecycle->label(),
                 'note' => $meta->note,
                 // Scheduled ones also say when they run: the next question
                 // after "what does it do?".

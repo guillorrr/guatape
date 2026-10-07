@@ -66,7 +66,6 @@ export interface CatalogCommand {
   options: CommandOption[];
   example: string;
   lifecycle: 'recurring' | 'repair' | 'one_shot';
-  lifecycle_label: string;
   note: string | null;
   schedule: { expression: string; next_run: string | null; last_run: LastRun | null } | null;
 }

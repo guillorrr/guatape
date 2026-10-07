@@ -1,4 +1,5 @@
 import { ApiError } from '@/core/services/api.service';
+import { i18n } from '@/i18n';
 import { ref } from 'vue';
 
 export function useFileUpload() {
@@ -33,7 +34,9 @@ export function useFileUpload() {
       return response.data;
     } catch (e) {
       error.value =
-        e instanceof ApiError ? (e.fieldError('file') ?? e.message) : 'Error al subir el archivo';
+        e instanceof ApiError
+          ? (e.fieldError('file') ?? e.message)
+          : i18n.global.t('errors.uploadFailed');
       return null;
     } finally {
       uploading.value = false;

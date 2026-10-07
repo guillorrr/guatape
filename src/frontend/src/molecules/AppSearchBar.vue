@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   modelValue: string;
@@ -40,7 +43,7 @@ function clear() {
       <InputIcon class="pi pi-search" />
       <InputText
         v-model="localValue"
-        :placeholder="placeholder ?? 'Buscar...'"
+        :placeholder="placeholder ?? t('common.search')"
         fluid
         class="search-input"
       />

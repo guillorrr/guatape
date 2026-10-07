@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import Paginator from 'primevue/paginator';
 import { computed } from 'vue';
+
+const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
@@ -45,7 +48,9 @@ const visible = computed(() => props.lastPage > 1 || props.rowsPerPageOptions.le
     :first="first"
     :rows-per-page-options="rowsPerPageOptions.length > 0 ? rowsPerPageOptions : undefined"
     :template="template"
-    current-page-report-template="{first}–{last} de {totalRecords}"
+    :current-page-report-template="
+      t('table.pageReport', { first: '{first}', last: '{last}', total: '{totalRecords}' })
+    "
     @page="
       (e: any) => {
         // Paginator emits both rows and page together when the user changes

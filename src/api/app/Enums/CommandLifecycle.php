@@ -3,7 +3,7 @@
 namespace App\Enums;
 
 /**
- * Where a command is in its life. A name like "backfill" says nothing about
+ * Where a command is in its life (the SPA shows a translated badge per value). A name like "backfill" says nothing about
  * whether there is still work to do; this does.
  */
 enum CommandLifecycle: string
@@ -16,13 +16,4 @@ enum CommandLifecycle: string
 
     /** Done: the migration it existed for is finished. Kept as a record; requires a note. */
     case OneShot = 'one_shot';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Recurring => 'En uso',
-            self::Repair => 'Reparación',
-            self::OneShot => 'Histórico',
-        };
-    }
 }

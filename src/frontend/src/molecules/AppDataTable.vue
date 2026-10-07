@@ -1,6 +1,9 @@
 <script setup lang="ts" generic="T">
+import { useI18n } from 'vue-i18n';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+
+const { t } = useI18n();
 
 defineProps<{
   columns: { key: string; label: string; sortable?: boolean; width?: string }[];
@@ -23,7 +26,7 @@ defineEmits<{
     :selection-mode="clickable ? 'single' : undefined"
     @row-click="(e: any) => $emit('row-click', e.data)"
   >
-    <template #empty>{{ emptyText ?? 'No hay datos' }}</template>
+    <template #empty>{{ emptyText ?? t('common.noData') }}</template>
     <Column
       v-for="col in columns"
       :key="col.key"

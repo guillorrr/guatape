@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /** Time picker bound to "HH:mm" (24 h) or null. See core/utils/dates.ts. */
 import DatePicker from 'primevue/datepicker';
 import { computed } from 'vue';
@@ -14,8 +15,10 @@ const props = withDefaults(
     invalid?: boolean;
     disabled?: boolean;
   }>(),
-  { stepMinute: 5, inputId: undefined, placeholder: 'hh:mm', invalid: false, disabled: false },
+  { stepMinute: 5, inputId: undefined, placeholder: undefined, invalid: false, disabled: false },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | null] }>();
 
@@ -33,7 +36,7 @@ const time = computed({
     hour-format="24"
     :step-minute="stepMinute"
     :input-id="inputId"
-    :placeholder="placeholder"
+    :placeholder="placeholder ?? t('forms.timePlaceholder')"
     :invalid="invalid"
     :disabled="disabled"
     show-icon

@@ -18,6 +18,8 @@ class UpdateProfileRequest extends FormRequest
                 'sometimes', 'required', 'string', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($this->user()->id),
             ],
+            // null: follow the browser / app default.
+            'locale' => ['sometimes', 'nullable', Rule::in(config('app.supported_locales'))],
         ];
     }
 }

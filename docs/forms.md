@@ -13,7 +13,7 @@ const form = useForm({ name: '', manager_id: null as number | null, starts_on: n
 async function save() {
   try {
     await form.submit(() => projectService.create(form.data))
-    toast.success('Proyecto creado')
+    toast.success(t('projects.created'))
   } catch (e) {
     // 422s are already in form.errors; anything else is for the user to see.
     if (e instanceof ApiError && !e.isValidation) toast.error(e.message)
@@ -23,18 +23,18 @@ async function save() {
 
 <template>
   <form id="project-form" @submit.prevent="save">
-    <AppField label="Nombre" for="p-name" :error="form.error('name')" required>
+    <AppField :label="t('projects.name')" for="p-name" :error="form.error('name')" required>
       <InputText id="p-name" v-model="form.data.name" :invalid="form.hasError('name')" />
     </AppField>
-    <AppField label="Responsable" for="p-manager" :error="form.error('manager_id')">
+    <AppField :label="t('projects.manager')" for="p-manager" :error="form.error('manager_id')">
       <AppRemoteSelect v-model="form.data.manager_id" input-id="p-manager"
         :fetch-options="userService.options" :invalid="form.hasError('manager_id')" />
     </AppField>
-    <AppField label="Inicio" for="p-start" :error="form.error('starts_on')">
+    <AppField :label="t('projects.startsOn')" for="p-start" :error="form.error('starts_on')">
       <AppDatePicker v-model="form.data.starts_on" input-id="p-start" />
     </AppField>
   </form>
-  <Button label="Guardar" type="submit" form="project-form" :loading="form.processing.value" />
+  <Button :label="t('common.save')" type="submit" form="project-form" :loading="form.processing.value" />
 </template>
 ```
 
@@ -80,7 +80,7 @@ without it.
 
 ## Language
 
-The UI is Spanish. The API answers in `APP_LOCALE` (`es` by default): field
-names come from `lang/es/validation.php` → `attributes`; add new fields there
-so messages read "El campo fecha de inicio es obligatorio". PrimeVue's own
-texts (calendars, paginator) use `core/constants/primevue-locale-es.ts`.
+Labels, placeholders and messages come from `t()` (see `docs/i18n.md`). The
+API's 422 messages arrive in the user's language; add new fields to
+`lang/<code>/validation.php` → `attributes` so they read "El campo fecha de
+inicio es obligatorio" instead of "El campo starts on…".

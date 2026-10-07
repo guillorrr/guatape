@@ -3,7 +3,7 @@
 interface ImportMetaEnv {
   /** Name shown in the sidebar, the header and the browser tab. */
   readonly VITE_APP_NAME?: string;
-  /** BCP 47 locale for dates and numbers (default es-AR). */
+  /** Regional format for dates/numbers when the UI is in Spanish (default es-AR). */
   readonly VITE_LOCALE?: string;
   /** IANA time zone used to display API timestamps (default America/Argentina/Buenos_Aires). */
   readonly VITE_TIME_ZONE?: string;

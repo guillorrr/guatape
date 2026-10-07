@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /**
  * Select whose options come from the API as the user types. Binds the option
  * VALUE (an id), not the object, so it plugs straight into a form payload.
@@ -13,7 +14,7 @@
  * cached options are dropped and (by default) the selection is cleared, the
  * way a "department" select resets when the "business unit" changes.
  *
- * Inline create: with `creatable`, the dropdown offers "Crear «texto»" and
+ * Inline create: with `creatable`, the dropdown offers "Create “text”" and
  * emits `create` with the typed text; the parent opens its form and, once
  * saved, sets v-model to the new id (passing it in `initialOptions` so the
  * label shows without another search).
@@ -57,13 +58,15 @@ const props = withDefaults(
     clearOnParamsChange: true,
     multiple: false,
     creatable: false,
-    placeholder: 'Buscar…',
+    placeholder: undefined,
     inputId: undefined,
     invalid: false,
     disabled: false,
     minLength: 0,
   },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{
   'update:modelValue': [value: Value | Value[]];
@@ -156,7 +159,7 @@ function create() {
     option-label="label"
     :multiple="multiple"
     :input-id="inputId"
-    :placeholder="placeholder"
+    :placeholder="placeholder ?? t('common.search')"
     :invalid="invalid"
     :disabled="disabled"
     :loading="loading"
@@ -165,7 +168,7 @@ function create() {
     dropdown
     force-selection
     fluid
-    empty-search-message="Sin resultados"
+    :empty-search-message="t('common.noResults')"
     @complete="search"
   >
     <template #option="{ option }">
@@ -179,7 +182,7 @@ function create() {
     <template v-if="creatable" #footer>
       <div class="remote-footer">
         <Button
-          :label="lastQuery ? `Crear «${lastQuery}»` : 'Crear nuevo'"
+          :label="lastQuery ? t('forms.createQuery', { query: lastQuery }) : t('forms.createNew')"
           icon="pi pi-plus"
           text
           size="small"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 /**
  * Rich-text editor (PrimeVue Editor / Quill) bound to an HTML string.
  *
@@ -22,6 +23,8 @@ const props = withDefaults(
   }>(),
   { placeholder: '', height: '180px', invalid: false, readonly: false },
 );
+
+const { t } = useI18n();
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | null] }>();
 
@@ -47,30 +50,43 @@ const html = computed({
     <template #toolbar>
       <span class="ql-formats">
         <select class="ql-header">
-          <option value="2">Título</option>
-          <option value="3">Subtítulo</option>
-          <option value="0" selected>Normal</option>
+          <option value="2">{{ t('forms.richText.heading') }}</option>
+          <option value="3">{{ t('forms.richText.subheading') }}</option>
+          <option value="0" selected>{{ t('forms.richText.normal') }}</option>
         </select>
       </span>
       <span class="ql-formats">
-        <button class="ql-bold" type="button" aria-label="Negrita"></button>
-        <button class="ql-italic" type="button" aria-label="Cursiva"></button>
-        <button class="ql-underline" type="button" aria-label="Subrayado"></button>
-        <button class="ql-strike" type="button" aria-label="Tachado"></button>
+        <button class="ql-bold" type="button" :aria-label="t('forms.richText.bold')"></button>
+        <button class="ql-italic" type="button" :aria-label="t('forms.richText.italic')"></button>
+        <button
+          class="ql-underline"
+          type="button"
+          :aria-label="t('forms.richText.underline')"
+        ></button>
+        <button class="ql-strike" type="button" :aria-label="t('forms.richText.strike')"></button>
       </span>
       <span class="ql-formats">
-        <button class="ql-list" value="ordered" type="button" aria-label="Lista numerada"></button>
+        <button
+          class="ql-list"
+          value="ordered"
+          type="button"
+          :aria-label="t('forms.richText.ordered')"
+        ></button>
         <button
           class="ql-list"
           value="bullet"
           type="button"
-          aria-label="Lista con viñetas"
+          :aria-label="t('forms.richText.bullet')"
         ></button>
-        <button class="ql-blockquote" type="button" aria-label="Cita"></button>
-        <button class="ql-link" type="button" aria-label="Enlace"></button>
+        <button
+          class="ql-blockquote"
+          type="button"
+          :aria-label="t('forms.richText.quote')"
+        ></button>
+        <button class="ql-link" type="button" :aria-label="t('forms.richText.link')"></button>
       </span>
       <span class="ql-formats">
-        <button class="ql-clean" type="button" aria-label="Quitar formato"></button>
+        <button class="ql-clean" type="button" :aria-label="t('forms.richText.clean')"></button>
       </span>
     </template>
   </Editor>

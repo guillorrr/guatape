@@ -6,7 +6,7 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 ## Tech Stack
 - **Backend**: Laravel 13 (PHP 8.4), Eloquent, spatie/laravel-permission
 - **Auth**: Laravel Sanctum, **cookie-based SPA session** (no tokens in the browser) — see `docs/auth.md`
-- **Frontend**: Vue 3 + Vite + TypeScript, Pinia, Vue Router, **PrimeVue 4** (Aura preset)
+- **Frontend**: Vue 3 + Vite + TypeScript, Pinia, Vue Router, vue-i18n (es, en), **PrimeVue 4** (Aura preset)
 - **Database**: MySQL 8.4 — **Cache/Queue**: Redis 7 (sessions in the database by default)
 - **Design System**: Storybook 8, SCSS, Atomic Design
 - **Monorepo**: npm workspaces (`src/frontend`); `src/api` is a regular Laravel app
@@ -58,6 +58,7 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 | API shape, errors, `ListQuery`, background jobs, attachments, settings, seeders, tests | `docs/backend-conventions.md` |
 | CRUD list pages (`AppCrudTable` + `useDataTable` + `ListQuery`) | `docs/datatable-pattern.md` |
 | Forms: `useForm`, `AppField` and the form kit (remote selects, repeater, dates, rich text, files) | `docs/forms.md` |
+| Languages: how es/en are picked, writing UI and API text, adding a language | `docs/i18n.md` |
 | CI, production stack, deploy script, rollback | `docs/deployment.md` |
 
 ## Architecture Conventions
@@ -83,7 +84,7 @@ Check `APP_NAME` in `.env` to determine if this is the base scaffold or a fork. 
 - **Destructive confirms**: `useConfirm()` with `defaultFocus: 'reject'`.
 - **Mobile**: every page must fit 390px wide; wide tables scroll inside their box.
 - **Storybook**: every atom and molecule should have a `.stories.ts` file.
-- **Language**: UI in Spanish; the API answers in `APP_LOCALE` (`es`). New `__('…')` strings need their entry in `lang/es.json` (a test enforces it).
+- **Language**: no literal UI text — every string goes through `t()` with keys in `src/locales/{es,en}.json` (ESLint and a spec enforce it). API sentences use `__('…')` with `lang/es.json`. See `docs/i18n.md`.
 - **Tests**: Vitest specs next to the code in `__tests__/` (`*.spec.ts`); mount components with `mountWithPrime` (`src/test/mount.ts`).
 
 ## Naming Conventions

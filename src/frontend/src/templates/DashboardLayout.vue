@@ -5,10 +5,12 @@ import { useAuthStore } from '@/core/stores/auth.store';
 import { useLayoutStore } from '@/core/stores/layout.store';
 import { storeToRefs } from 'pinia';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 const auth = useAuthStore();
 const router = useRouter();
+const { t } = useI18n();
 
 // Collapsible sidebar. The store wires the viewport breakpoint once (auto
 // collapse on small screens, push content on large); the hamburger toggles it
@@ -35,14 +37,14 @@ async function logout() {
       <header class="layout__topbar">
         <div class="layout__topbar-left">
           <Button
-            v-tooltip.bottom="'Mostrar/ocultar menú'"
+            v-tooltip.bottom="t('app.toggleMenu')"
             icon="pi pi-bars"
             text
             rounded
             severity="secondary"
             size="small"
             class="layout__menu-toggle"
-            aria-label="Mostrar u ocultar el menú"
+            :aria-label="t('app.toggleMenu')"
             @click="layout.toggleSidebar()"
           />
         </div>
@@ -54,13 +56,13 @@ async function logout() {
             <span>{{ auth.user?.name }}</span>
           </button>
           <Button
-            v-tooltip.bottom="'Cerrar sesión'"
+            v-tooltip.bottom="t('app.logout')"
             icon="pi pi-sign-out"
             text
             rounded
             severity="secondary"
             size="small"
-            aria-label="Cerrar sesión"
+            :aria-label="t('app.logout')"
             @click="logout"
           />
         </div>

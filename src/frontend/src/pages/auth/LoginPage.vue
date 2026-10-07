@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
@@ -11,6 +12,7 @@ import { ApiError } from '@/core/services/api.service';
 import { useForm } from '@/composables/useForm';
 
 const auth = useAuthStore();
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const form = useForm({ email: '', password: '', remember: false });
@@ -33,12 +35,12 @@ async function submit() {
 
 <template>
   <form class="auth-form" @submit.prevent="submit">
-    <h1>Iniciar sesión</h1>
+    <h1>{{ t('auth.login.title') }}</h1>
 
     <Message v-if="failure" severity="error" size="small">{{ failure }}</Message>
 
     <div class="auth-form__field">
-      <label for="login-email">Email</label>
+      <label for="login-email">{{ t('auth.email') }}</label>
       <InputText
         id="login-email"
         v-model="form.data.email"
@@ -51,7 +53,7 @@ async function submit() {
     </div>
 
     <div class="auth-form__field">
-      <label for="login-password">Contraseña</label>
+      <label for="login-password">{{ t('auth.password') }}</label>
       <Password
         v-model="form.data.password"
         input-id="login-password"
@@ -68,13 +70,13 @@ async function submit() {
 
     <label class="auth-form__remember">
       <Checkbox v-model="form.data.remember" binary input-id="login-remember" />
-      <span>Mantener la sesión iniciada</span>
+      <span>{{ t('auth.login.remember') }}</span>
     </label>
 
-    <Button type="submit" label="Ingresar" :loading="form.processing.value" />
+    <Button type="submit" :label="t('auth.login.submit')" :loading="form.processing.value" />
 
     <div class="auth-form__links">
-      <RouterLink :to="{ name: 'forgot-password' }">¿Olvidaste tu contraseña?</RouterLink>
+      <RouterLink :to="{ name: 'forgot-password' }">{{ t('auth.login.forgot') }}</RouterLink>
     </div>
   </form>
 </template>

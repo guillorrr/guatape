@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
@@ -8,6 +9,7 @@ import { ApiError } from '@/core/services/api.service';
 import { useForm } from '@/composables/useForm';
 
 const auth = useAuthStore();
+const { t } = useI18n();
 const form = useForm({ email: '' });
 const sent = ref<string | null>(null);
 const failure = ref<string | null>(null);
@@ -24,16 +26,14 @@ async function submit() {
 
 <template>
   <form class="auth-form" @submit.prevent="submit">
-    <h1>Recuperar contraseña</h1>
+    <h1>{{ t('auth.forgot.title') }}</h1>
 
-    <Message v-if="sent" severity="success" size="small">
-      Si el email está registrado, te llega un enlace para elegir una contraseña nueva.
-    </Message>
+    <Message v-if="sent" severity="success" size="small">{{ t('auth.forgot.sent') }}</Message>
     <Message v-if="failure" severity="error" size="small">{{ failure }}</Message>
 
     <template v-if="!sent">
       <div class="auth-form__field">
-        <label for="forgot-email">Email</label>
+        <label for="forgot-email">{{ t('auth.email') }}</label>
         <InputText
           id="forgot-email"
           v-model="form.data.email"
@@ -44,11 +44,11 @@ async function submit() {
         />
         <small v-if="form.error('email')" class="auth-form__error">{{ form.error('email') }}</small>
       </div>
-      <Button type="submit" label="Enviar enlace" :loading="form.processing.value" />
+      <Button type="submit" :label="t('auth.forgot.submit')" :loading="form.processing.value" />
     </template>
 
     <div class="auth-form__links">
-      <RouterLink :to="{ name: 'login' }">Volver a iniciar sesión</RouterLink>
+      <RouterLink :to="{ name: 'login' }">{{ t('auth.forgot.back') }}</RouterLink>
     </div>
   </form>
 </template>
