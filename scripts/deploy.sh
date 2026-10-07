@@ -5,7 +5,7 @@
 #
 #   scripts/deploy.sh [git-ref]      # default: origin/main
 #
-# Order matters: maintenance on → code → images → deps → workers → BACKUP →
+# Order matters: maintenance on → code (then re-exec the new script) → images → deps → workers → BACKUP →
 # migrate → maintenance off → smoke test. The backup runs right before
 # migrating so a bad migration can always be rolled back to this exact point.
 #
@@ -27,12 +27,18 @@ main() {
 
   [ -f .env.prod ] || { echo "✗ .env.prod missing (copy .env.prod.example)"; exit 1; }
 
-  step "Maintenance on"
-  "${DC[@]}" exec -T api php artisan down --retry=15 2>/dev/null || echo "  api not running (first deploy?), continuing"
+  # Phase 1 (old code): maintenance on + checkout, then re-run the script as it
+  # exists in $REF, so changes to this file apply in the same deploy.
+  if [ -z "${DEPLOY_CHECKED_OUT:-}" ]; then
+    step "Maintenance on"
+    "${DC[@]}" exec -T api php artisan down --retry=15 2>/dev/null || echo "  api not running (first deploy?), continuing"
 
-  step "Checking out $REF"
-  git fetch --all --prune
-  git reset --hard "$REF"
+    step "Checking out $REF"
+    git fetch --all --prune
+    git reset --hard "$REF"
+
+    DEPLOY_CHECKED_OUT=1 exec scripts/deploy.sh "$REF"
+  fi
 
   step "Building and starting services"
   "${DC[@]}" up -d --build --remove-orphans
