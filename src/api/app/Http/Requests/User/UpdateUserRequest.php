@@ -18,6 +18,7 @@ class UpdateUserRequest extends FormRequest
                 'sometimes', 'required', 'string', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($this->route('user')),
             ],
+            'locale' => ['sometimes', 'nullable', Rule::in(config('app.supported_locales'))],
         ];
     }
 }

@@ -117,9 +117,22 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'es'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Supported locales
+    |--------------------------------------------------------------------------
+    |
+    | Languages a user can pick (users.locale) and the API can answer in
+    | (SetLocale middleware). Each needs lang/<code>/ + lang/<code>.json here
+    | and src/frontend/src/locales/<code>.json in the SPA.
+    |
+    */
+
+    'supported_locales' => ['es', 'en'],
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 

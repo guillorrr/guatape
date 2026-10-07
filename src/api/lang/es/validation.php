@@ -182,6 +182,7 @@ return [
         'file' => 'archivo',
         'notes' => 'notas',
         'token' => 'token',
+        'locale' => 'idioma',
     ],
 
 ];

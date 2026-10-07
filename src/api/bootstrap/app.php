@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SetLocale;
 use App\Support\DuplicateKeyResponder;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Application;
@@ -27,6 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // without an Accept: application/json header ends in a 500.
         $middleware->redirectGuestsTo(fn () => rtrim(config('app.frontend_url'), '/').'/login');
         $middleware->redirectUsersTo(fn () => rtrim(config('app.frontend_url'), '/').'/');
+
+        // Response language: user's choice → Accept-Language → app.locale.
+        $middleware->api(append: [SetLocale::class]);
 
         $middleware->alias([
             'role' => RoleMiddleware::class,

@@ -46,8 +46,8 @@ class SessionAuthTest extends TestCase
 
     public function test_messages_follow_the_app_locale(): void
     {
-        app()->setLocale('es');
         $user = User::factory()->create(['password' => 'secret-pass']);
+        $this->withHeader('Accept-Language', 'es');
 
         $this->postJson('/api/v1/auth/login', ['email' => $user->email, 'password' => 'nope'])
             ->assertJsonPath('errors.email.0', 'El email o la contraseña no son correctos.');
