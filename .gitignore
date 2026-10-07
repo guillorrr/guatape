@@ -5,6 +5,7 @@ src/api/vendor/
 # Environment
 .env
 .env.local
+.env.prod
 # The SPA's .env only holds public VITE_* build settings (see the file).
 !src/frontend/.env
 

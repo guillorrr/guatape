@@ -1,0 +1,35 @@
+name: Deploy
+
+# Deploys main to a server through a self-hosted runner, after CI passes.
+#
+# Setup (once per fork):
+#   1. On the server: clone the repo into the deploy directory, create .env.prod
+#      from .env.prod.example, and register a self-hosted runner with the
+#      label `deploy`.
+#   2. In the repo: Settings → Variables → Actions → DEPLOY_DIR = absolute path
+#      of that clone. Without it the deploy job is skipped (CI still runs).
+#
+# Only push to main and manual runs trigger it, never pull requests: a
+# self-hosted runner must not execute code from forks.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: ci
+    if: vars.DEPLOY_DIR != ''
+    runs-on: [self-hosted, deploy]
+    timeout-minutes: 45
+    steps:
+      - name: Deploy ${{ github.sha }}
+        working-directory: ${{ vars.DEPLOY_DIR }}
+        run: scripts/deploy.sh ${{ github.sha }}

@@ -38,8 +38,9 @@ RUN apt-get update && apt-get install -y \
 # Composer, pinned by digest for the same reason as the base image.
 COPY --from=composer:2@sha256:e8fdff913656c23e90ebbe0d7c55ab078c2aefdbb53ff79a73af5cc0921d5b81 /usr/bin/composer /usr/bin/composer
 
-# PHP config (shared by dev and prod; dev-only overrides live in docker/api/php-dev.ini)
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+# PHP config: production defaults (errors logged, never displayed). Dev-only
+# overrides live in docker/api/php-dev.ini, mounted by docker-compose.yml only.
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 RUN echo "upload_max_filesize=64M" >> "$PHP_INI_DIR/php.ini" \
     && echo "post_max_size=64M" >> "$PHP_INI_DIR/php.ini" \
     && echo "memory_limit=256M" >> "$PHP_INI_DIR/php.ini"
