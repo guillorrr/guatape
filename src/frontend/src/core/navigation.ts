@@ -13,6 +13,8 @@ export interface MenuItem {
   to?: string;
   /** Visible if the user has ANY of these permissions. */
   permission?: string | string[];
+  /** Only for super admins on the central domain (tenancy on). */
+  superAdmin?: boolean;
   children?: MenuItem[];
 }
 
@@ -47,6 +49,12 @@ export const menu: MenuItem[] = [
         permission: 'system.view',
       },
     ],
+  },
+  {
+    label: 'nav.platform',
+    icon: 'pi pi-globe',
+    superAdmin: true,
+    children: [{ label: 'nav.tenants', icon: 'pi pi-building', to: '/app/platform/tenants' }],
   },
   // Development only: living reference of the form kit (pages/dev/FormKitPage.vue).
   ...(import.meta.env.DEV

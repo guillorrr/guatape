@@ -16,6 +16,8 @@ const { t, locale } = useI18n();
 // Errors no page handles itself: an expired session sends the user to login,
 // a forbidden action or a server/network failure gets a toast.
 const unsubscribe = onApiError((error) => {
+  // An unknown or suspended organization has its own page (TenantUnavailablePage).
+  if (error.code === 'tenant_not_found' || error.code === 'tenant_suspended') return;
   if (error.status === 401) {
     if (auth.isAuthenticated) {
       auth.clear();
